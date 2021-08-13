@@ -23,7 +23,7 @@ public class ConnectionFactory {
     private final MongoClient mongoClient;
     private static final ConnectionFactory connectionFactory = new ConnectionFactory();
 
-    public ConnectionFactory() {
+    private ConnectionFactory() {
         Properties appProperties = new Properties();
 
         try {
