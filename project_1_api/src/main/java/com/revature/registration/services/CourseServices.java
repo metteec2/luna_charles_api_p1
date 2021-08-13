@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class CourseServices {
 
+    // TODO implement slf4j (logback?)
     private final Logger logger = LogManager.getLogger(CourseServices.class);
     private CourseRepository courseRepo;
 
