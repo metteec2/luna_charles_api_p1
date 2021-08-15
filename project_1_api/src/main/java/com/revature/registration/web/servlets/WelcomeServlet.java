@@ -12,4 +12,5 @@ public class WelcomeServlet extends HttpServlet {
     public WelcomeServlet(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
+
 }
