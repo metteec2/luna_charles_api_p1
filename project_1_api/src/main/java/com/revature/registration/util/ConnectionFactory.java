@@ -28,7 +28,8 @@ public class ConnectionFactory {
 
         try {
 
-            appProperties.load(new FileReader("src/main/resources/app.properties"));
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            appProperties.load(loader.getResourceAsStream("app.properties"));
 
             String ipAddress = appProperties.getProperty("ipAddress");
             int port = Integer.parseInt(appProperties.getProperty("port"));
