@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: coretto8
+    pre_build:
+      commands:
+        - echo Nothing to do in pre-build phase...
+    build:
+      commands:
+        - echo Build started on `date`
+        - mvn package
+    post_build:
+      commands:
+        - echo Build completed on `date`
+artifacts:
+  files:
+    - target/project_1_api-1.0-SNAPSHOT.war
