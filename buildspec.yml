@@ -16,8 +16,8 @@ phases:
       commands:
         - echo Build completed on `date`
         - unzip luna_charles_api_p1.war -d artifact/
-        - mv artifact/WEB-INF ./WEB-INF
+        - mv artifact/WEB-INF WEB-INF
 artifacts:
   files:
-    - ./WEB-INF/**/*
+    - WEB-INF/**/*
   name: artifact
