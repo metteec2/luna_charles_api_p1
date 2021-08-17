@@ -6,7 +6,7 @@ phases:
       java: corretto8
     pre_build:
       commands:
-        - aws s3 cp s3://s3-bucket-luna-charles-p1/app.properties .src/main/resources/app.properties
+        - aws s3 cp s3://s3-bucket-luna-charles-p1/app.properties ./src/main/resources/app.properties
     build:
       commands:
         - echo Build started on `date`
