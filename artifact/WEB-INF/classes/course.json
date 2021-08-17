@@ -1,0 +1,124 @@
+[
+  {
+    "number": "java 100",
+    "name": "Intro to Java Basics",
+    "description": "This introductory course covers OOP principles and Java basics",
+    "professor": "wezley.singleton@revature.net",
+    "capacity": 25,
+    "students": [
+      "peter.parker@avengers.com",
+      "tony.stark@starkindustries.com"
+    ]
+  },
+  {
+    "number": "data 105",
+    "name": "Intro to Queries",
+    "description": "An introduction to sql, nosql, and methods of data persistence",
+    "professor": "wezley.singleton@revature.net",
+    "capacity": 25,
+    "students": [
+      "bruce.wayne@totallynotbatman.com",
+      "other.guy@example.com"
+    ]
+  },
+  {
+    "number": "calc 300",
+    "name": "Multivariable Calculus",
+    "description": "Building on calc 200, this course introduces vector calculus, parametric equations, and other multivariable applications of calculus",
+    "professor": "anton@prof.edu",
+    "capacity": 25,
+    "students": [
+      "victim1@tester.com",
+      "victim2@tester.com",
+      "eagerstudent@tester.com"
+    ]
+  },
+  {
+    "number": "math 402",
+    "name": "Abstract Algebra I",
+    "description": "An introduction to group and field theory",
+    "professor": "anton@prof.edu",
+    "capacity": 25,
+    "students": [
+      "bruce.wayne@totallynotbatman.com",
+      "peter.parker@avengers.com"
+    ]
+  },
+  {
+    "number": "math 501",
+    "name": "Advanced Differential Equations",
+    "description": "Building and expanding on concepts from differential equations",
+    "professor": "anton@prof.edu",
+    "capacity": 25,
+    "students": [
+      "other.guy@example.com",
+      "eagerstudent@tester.com"
+    ]
+  },
+  {
+    "number": "eng 101",
+    "name": "college essay",
+    "description": "required liberal arts course for all undergraduate students",
+    "professor": "ruby.gold@teacher.edu",
+    "capacity": 3,
+    "students": [
+      "emerald@gem.com",
+      "saphire@gem.com",
+      "diamon@gem.com"
+    ]
+  },
+  {
+    "number": "eng 102",
+    "name": "college research paper",
+    "description": "required liberal arts course for all undergraduate students",
+    "professor": "ruby.gold@teacher.edu",
+    "capacity": 25,
+    "students": [
+      "emerald@gem.com",
+      "saphire@gem.com",
+      "diamon@gem.com"
+    ]
+  },
+  {
+    "number": "eng 210",
+    "name": "Foundational Grammar",
+    "description": "Covering grammar and its relation to writing in varying contexts",
+    "professor": "ruby.gold@teacher.edu",
+    "capacity": 25,
+    "students": [
+
+    ]
+  },
+  {
+    "number": "ag 100",
+    "name": "Basics of Agriculture",
+    "description": "A high level overview of agriculture",
+    "professor": "oldie@mcdonaldfarms.com",
+    "capacity": 25,
+    "students": [
+
+    ]
+  },
+  {
+    "number": "ag 200",
+    "name": "Concepts of Efficient Farming",
+    "description": "How to farm effectively and efficiently",
+    "professor": "oldie@mcdonaldfamrs.com",
+    "capacity": 25,
+    "students": [
+
+    ]
+  },
+  {
+    "number": "met 100",
+    "name": "Intro to Meteorology",
+    "description": "Learn how the weather occurs and the basics of its prediction",
+    "professor": "thor@asgard.net",
+    "capacity": 25,
+    "students": [
+      "magni@asgard.net",
+      "modi@asgard.net",
+      "loki@asgard.net"
+    ]
+  }
+]
