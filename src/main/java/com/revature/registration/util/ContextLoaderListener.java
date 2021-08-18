@@ -8,6 +8,7 @@ import com.revature.registration.repositories.FacultyRepository;
 import com.revature.registration.repositories.StudentRepository;
 import com.revature.registration.services.CourseServices;
 import com.revature.registration.services.UserServices;
+import com.revature.registration.web.servlets.HealthCheckServlet;
 import com.revature.registration.web.servlets.WelcomeServlet;
 
 import javax.servlet.ServletContext;
@@ -30,9 +31,11 @@ public class ContextLoaderListener implements ServletContextListener {
         UserServices userServices = new UserServices(studentRepository,facultyRepository);
 
         WelcomeServlet welcomeServlet = new WelcomeServlet(objectMapper);
+        HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.addServlet("WelcomeServlet",welcomeServlet).addMapping("/welcome");
+        servletContext.addServlet("HealthCheckServlet",healthCheckServlet).addMapping("/health");
     }
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
