@@ -13,4 +13,19 @@ public class CourseServlet extends HttpServlet {
         System.out.println(req.getMethod() + " received from client.");
         resp.getWriter().write("<h1>Adjust Courses</h1>");
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //#TODO logic for adding courses
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //#TODO logic for updating course info
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //#TODO logic for deleting a course
+    }
 }
