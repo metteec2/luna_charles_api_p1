@@ -22,6 +22,7 @@ public class WelcomeServlet extends HttpServlet {
         resp.getWriter().write("<h1>course registration!</h1>");
     }
 
+    // TODO after hearing today's lesson, this logic appears to be something we'll handle in the ui
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // not sure if this will be a parameter or attribute, but either way it shouldn't be difficult to access
