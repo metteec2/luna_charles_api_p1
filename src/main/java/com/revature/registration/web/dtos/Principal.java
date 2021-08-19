@@ -19,7 +19,7 @@ public class Principal {
 
     public Principal(Faculty faculty) {
         this.id = faculty.getId();
-        this.email = getEmail();
+        this.email = faculty.getEmail();
     }
 
     public String getId() {
