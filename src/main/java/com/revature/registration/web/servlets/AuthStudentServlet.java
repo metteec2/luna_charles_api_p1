@@ -37,14 +37,13 @@ public class AuthStudentServlet extends HttpServlet {
             // use the object mapper to read the inputs given by the user as Credentials
             Credentials credentials = objectMapper.readValue(req.getInputStream(), Credentials.class);
             // send those credentials to the user services to log them in, may throw an authentication exception
-            // TODO change login methods to output Principal instead of student? or get the student, then convert to principal?
-            Principal principal = userServices.loginStudent(credentials.getEmail(),credentials.getPassword());
+            Principal principal = new Principal(userServices.loginStudent(credentials.getEmail(),credentials.getPassword()));
             // map the new object, the principal, back into json and send it to the ui
             String payload = objectMapper.writeValueAsString(principal);
             respWriter.write(payload);
 
             // the user's session will stay with them over time, meaning we can reference it when needed.
-            // in this case, we add an "auth-user" attribute so that we can ensure a user is meant to be on a webpage
+            // in this case, we add an "auth-user" attribute so that we can ensure a user is meant to be on a webpage later on
             HttpSession session = req.getSession();
             session.setAttribute("auth-user",principal);
 
