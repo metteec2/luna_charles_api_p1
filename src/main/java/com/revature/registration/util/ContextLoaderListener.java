@@ -35,6 +35,7 @@ public class ContextLoaderListener implements ServletContextListener {
         RegistrationServlet registrationServlet = new RegistrationServlet();
         StudentServlet studentServlet = new StudentServlet();
         FacultyServlet facultyServlet = new FacultyServlet();
+        AuthStudentServlet authStudentServlet = new AuthStudentServlet(userServices,objectMapper);
 
         ServletContext servletContext = sce.getServletContext();
         servletContext.addServlet("WelcomeServlet",welcomeServlet).addMapping("/welcome");
@@ -43,6 +44,7 @@ public class ContextLoaderListener implements ServletContextListener {
         servletContext.addServlet("RegistrationServlet",registrationServlet).addMapping("/registration");
         servletContext.addServlet("StudentServlet",studentServlet).addMapping("/student");
         servletContext.addServlet("FacultyServlet",facultyServlet).addMapping("/faculty");
+        servletContext.addServlet("AuthStudentServlet",authStudentServlet).addMapping("/authstudent");
 
     }
     @Override
