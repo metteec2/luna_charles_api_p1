@@ -34,13 +34,23 @@ public class StudentServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            HttpSession session = req.getSession();
-            Principal principal = (Principal) session.getAttribute("auth-user");
+            HttpSession session = req.getSession(false);
+            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
 
-            Student student = userServices.findStudentById(principal.getId());
-            String payload = objectMapper.writeValueAsString(student);
-            respWriter.write(payload);
+            if (principal == null) {
+                String msg = "No session found, please login.";
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            } else {
+                System.out.println(principal);
+                Student student = userServices.findStudentById(principal.getId());
+                String payload = objectMapper.writeValueAsString(student);
+                respWriter.write(payload);
+            }
         } catch (InvalidInformationException iie) {
+            iie.printStackTrace();
             resp.setStatus(401);
             ErrorResponse errorResponse = new ErrorResponse(401,iie.getMessage());
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
@@ -49,6 +59,7 @@ public class StudentServlet extends HttpServlet {
             ErrorResponse errorResponse = new ErrorResponse(500,dse.getMessage());
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
+            e.printStackTrace();
             resp.setStatus(500);
             ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
             respWriter.write(objectMapper.writeValueAsString(errorResponse));

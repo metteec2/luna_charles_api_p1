@@ -13,6 +13,7 @@ import com.revature.registration.util.exceptions.DataSourceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  * The StudentRepository Class connects with the collection in the database where Students are stored. Its methods are
@@ -57,8 +58,13 @@ public class StudentRepository implements CrudRepository<Student>{
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
-            Document queryDoc = new Document("_id", id);
+            Document queryDoc = new Document("_id", new ObjectId(id));
+            // TODO because the _id value in the database is not *exactly* this string (it's an oid) it's not finding anything
             Document returnDoc = studentCollection.find(queryDoc).first();
+
+            if (returnDoc == null) {
+                return null;
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             Student student = mapper.readValue(returnDoc.toJson(), Student.class);
@@ -69,6 +75,7 @@ public class StudentRepository implements CrudRepository<Student>{
             logger.debug(jme.getMessage());
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.debug(e.getMessage());
             throw new DataSourceException("An unexpected exception occurred",e);
         }
