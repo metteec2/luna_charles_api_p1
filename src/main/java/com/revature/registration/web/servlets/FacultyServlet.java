@@ -63,4 +63,10 @@ public class FacultyServlet extends HttpServlet {
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
+
+    // TODO write logic to update user info
+    @Override
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    }
 }

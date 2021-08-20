@@ -3,6 +3,7 @@ package com.revature.registration.web.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.revature.registration.models.Student;
+import com.revature.registration.services.CourseServices;
 import com.revature.registration.services.UserServices;
 import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
@@ -20,11 +21,13 @@ import java.io.PrintWriter;
 public class StudentServlet extends HttpServlet {
 
     private final UserServices userServices;
+    private final CourseServices courseServices;
     private final ObjectMapper objectMapper;
 
-    public StudentServlet(UserServices userServices, ObjectMapper objectMapper) {
+    public StudentServlet(UserServices userServices, CourseServices courseServices, ObjectMapper objectMapper) {
         this.userServices = userServices;
         this.objectMapper = objectMapper;
+        this.courseServices = courseServices;
     }
 
     // view student information
@@ -46,7 +49,9 @@ public class StudentServlet extends HttpServlet {
                 return;
             } else {
                 System.out.println(principal);
+                Student student = userServices.findStudentById(principal.getId());
                 String payload = objectMapper.writeValueAsString(principal);
+                payload += "\n" + objectMapper.writeValueAsString(courseServices.getRegisteredCourses(student));
                 respWriter.write(payload);
             }
         } catch (InvalidInformationException iie) {
