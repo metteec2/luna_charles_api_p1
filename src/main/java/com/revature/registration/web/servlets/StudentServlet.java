@@ -2,11 +2,13 @@ package com.revature.registration.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.revature.registration.models.Course;
 import com.revature.registration.models.Student;
 import com.revature.registration.services.CourseServices;
 import com.revature.registration.services.UserServices;
 import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
+import com.revature.registration.web.dtos.CourseDTO;
 import com.revature.registration.web.dtos.ErrorResponse;
 import com.revature.registration.web.dtos.Principal;
 
@@ -37,6 +39,8 @@ public class StudentServlet extends HttpServlet {
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
+
+
         try {
             HttpSession session = req.getSession(false);
             Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
@@ -49,9 +53,14 @@ public class StudentServlet extends HttpServlet {
                 return;
             } else {
                 System.out.println(principal);
+                // TODO overload getRegisteredCourses so that it takes in a student email, or maybe id
                 Student student = userServices.findStudentById(principal.getId());
                 String payload = objectMapper.writeValueAsString(principal);
-                payload += "\n" + objectMapper.writeValueAsString(courseServices.getRegisteredCourses(student));
+                for (Course c : courseServices.getRegisteredCourses(student)) {
+                    CourseDTO dto = new CourseDTO(c);
+                    payload += ",\n";
+                    payload += objectMapper.writeValueAsString(dto);
+                }
                 respWriter.write(payload);
             }
         } catch (InvalidInformationException iie) {
