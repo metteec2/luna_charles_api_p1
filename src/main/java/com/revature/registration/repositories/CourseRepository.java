@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,11 +42,10 @@ public class CourseRepository{
                 .append("description",newCourse.getDescription())
                 .append("professor",newCourse.getProfessor())
                 .append("capacity",newCourse.getCapacity())
-                .append("students",newCourse.getStudents());
+                .append("students", Arrays.asList(newCourse.getStudents()));
 
         courseCollection.insertOne(newCourseDoc);
         newCourse.setId(newCourseDoc.get("_id").toString());
-
         return newCourse;
     }
 

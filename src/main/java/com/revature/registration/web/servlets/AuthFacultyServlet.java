@@ -35,6 +35,8 @@ public class AuthFacultyServlet extends HttpServlet {
             Credentials credentials = objectMapper.readValue(req.getInputStream(), Credentials.class);
             Principal principal = new Principal(userServices.loginFaculty(credentials.getEmail(), credentials.getPassword()));
 
+            System.out.println("Faculty: " + userServices.loginFaculty(credentials.getEmail(), credentials.getPassword()));
+            System.out.println("Principal: " + principal);
             String payload = objectMapper.writeValueAsString(principal);
             respWriter.write(payload);
 

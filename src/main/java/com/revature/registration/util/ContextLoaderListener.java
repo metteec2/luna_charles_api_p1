@@ -31,10 +31,10 @@ public class ContextLoaderListener implements ServletContextListener {
 
         WelcomeServlet welcomeServlet = new WelcomeServlet(objectMapper);
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
-        CourseServlet courseServlet = new CourseServlet();
+        CourseServlet courseServlet = new CourseServlet(courseServices, userServices, objectMapper);
         RegistrationServlet registrationServlet = new RegistrationServlet();
-        StudentServlet studentServlet = new StudentServlet();
-        FacultyServlet facultyServlet = new FacultyServlet();
+        StudentServlet studentServlet = new StudentServlet(userServices,courseServices,objectMapper);
+        FacultyServlet facultyServlet = new FacultyServlet(userServices,objectMapper);
         AuthStudentServlet authStudentServlet = new AuthStudentServlet(userServices,objectMapper);
         AuthFacultyServlet authFacultyServlet = new AuthFacultyServlet(userServices,objectMapper);
 

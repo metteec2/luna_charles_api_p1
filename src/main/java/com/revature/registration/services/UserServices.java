@@ -5,6 +5,7 @@ import com.revature.registration.models.Student;
 import com.revature.registration.repositories.FacultyRepository;
 import com.revature.registration.repositories.StudentRepository;
 import com.revature.registration.util.exceptions.AuthenticationException;
+import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
 
 /**
@@ -18,6 +19,18 @@ public class UserServices {
     public UserServices(StudentRepository studentRepo, FacultyRepository facultyRepo) {
         this.studentRepo = studentRepo;
         this.facultyRepo = facultyRepo;
+    }
+
+    public Student findStudentById(String id) {
+        Student foundStudent = studentRepo.findById(id);
+        if (foundStudent == null) { throw new InvalidInformationException("you don't appear to be logged in as a student"); }
+        return foundStudent;
+    }
+
+    public Faculty findFacultyById(String id) {
+        Faculty foundFaculty = facultyRepo.findById(id);
+        if (foundFaculty == null) { throw new InvalidInformationException("you don't appear to be logged in as a faculty"); }
+        return foundFaculty;
     }
 
     /**

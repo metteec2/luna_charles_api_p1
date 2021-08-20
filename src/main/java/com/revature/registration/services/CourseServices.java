@@ -32,6 +32,7 @@ public class CourseServices {
      */
     public Course createCourse(Course newCourse) {
         isCourseValid(newCourse);
+        newCourse.setStudents(new String[0]);
         return courseRepo.save(newCourse);
     }
 
@@ -98,7 +99,7 @@ public class CourseServices {
      * @param number
      * @param student
      */
-    public  void removeFromCourse(String number, Student student) {
+    public void removeFromCourse(String number, Student student) {
         courseRepo.removeStudent(number,student.getEmail());
     }
 
