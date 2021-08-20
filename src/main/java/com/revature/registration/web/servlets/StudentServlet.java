@@ -32,6 +32,7 @@ public class StudentServlet extends HttpServlet {
         this.courseServices = courseServices;
     }
 
+    // TODO add query param "course". if we have that param, then give list of registered courses. else, give student info.
     // view student information
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
