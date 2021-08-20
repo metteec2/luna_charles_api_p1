@@ -23,8 +23,14 @@ public class UserServices {
 
     public Student findStudentById(String id) {
         Student foundStudent = studentRepo.findById(id);
-        if (foundStudent == null) { throw new InvalidInformationException("you don't appear to be logged in"); }
+        if (foundStudent == null) { throw new InvalidInformationException("you don't appear to be logged in as a student"); }
         return foundStudent;
+    }
+
+    public Faculty findFacultyById(String id) {
+        Faculty foundFaculty = facultyRepo.findById(id);
+        if (foundFaculty == null) { throw new InvalidInformationException("you don't appear to be logged in as a faculty"); }
+        return foundFaculty;
     }
 
     /**

@@ -59,7 +59,6 @@ public class StudentRepository implements CrudRepository<Student>{
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
             Document queryDoc = new Document("_id", new ObjectId(id));
-            // TODO because the _id value in the database is not *exactly* this string (it's an oid) it's not finding anything
             Document returnDoc = studentCollection.find(queryDoc).first();
 
             if (returnDoc == null) {

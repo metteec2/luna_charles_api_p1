@@ -13,6 +13,7 @@ import com.revature.registration.util.exceptions.DataSourceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  * The FacultyRepository Class connects with the collection in the database where Faculty are stored. Its methods
@@ -59,7 +60,7 @@ public class FacultyRepository implements CrudRepository<Faculty>{
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase facultyDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
-            Document queryDoc = new Document("_id", id);
+            Document queryDoc = new Document("_id", new ObjectId(id));
             Document returnDoc = facultyCollection.find(queryDoc).first();
 
             if (returnDoc == null) {
