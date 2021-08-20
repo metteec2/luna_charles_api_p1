@@ -105,7 +105,7 @@ public class FacultyRepository implements CrudRepository<Faculty>{
             ObjectMapper mapper = new ObjectMapper();
             Faculty faculty = mapper.readValue(authDoc.toJson(), Faculty.class);
             faculty.setId(authDoc.get("_id").toString());
-
+            System.out.println(faculty);
             return faculty;
         } catch (JsonMappingException jme) {
             logger.debug(jme.getMessage());

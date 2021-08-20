@@ -4,16 +4,21 @@ phases:
   install:
     runtime-versions:
       java: corretto8
-    pre_build:
-      commands:
-        - echo Nothing to do in pre-build phase...
-    build:
-      commands:
-        - echo Build started on `date`
-        - mvn package
-    post_build:
-      commands:
-        - echo Build completed on `date`
+  pre_build:
+    commands:
+      - aws s3 cp s3://s3-bucket-luna-charles-p1/app.properties ./src/main/resources/app.properties
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn package
+      - mv target/*.war ./luna_charles_api_p1.war
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - unzip luna_charles_api_p1.war -d artifact/
+      - mv artifact/WEB-INF WEB-INF
+      - ls
 artifacts:
   files:
-    - target/project_1_api-1.0-SNAPSHOT.war
+    - WEB-INF/**/*
+  name: artifact
