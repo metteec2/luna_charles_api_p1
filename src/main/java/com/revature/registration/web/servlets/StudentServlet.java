@@ -1,6 +1,7 @@
 package com.revature.registration.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.revature.registration.models.Student;
 import com.revature.registration.services.UserServices;
 import com.revature.registration.util.exceptions.DataSourceException;
@@ -26,7 +27,7 @@ public class StudentServlet extends HttpServlet {
         this.objectMapper = objectMapper;
     }
 
-    // TODO fix this, it's probably wrong
+    // view student information
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -63,6 +64,33 @@ public class StudentServlet extends HttpServlet {
             resp.setStatus(500);
             ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
+        }
+    }
+
+    //For student registration
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        PrintWriter printWriter = resp.getWriter();
+        resp.setContentType("application/json");
+
+        try {
+            Student newStudent = objectMapper.readValue(req.getInputStream(), Student.class);
+            Principal principal = new Principal(userServices.registerStudent(newStudent));
+            String payload = objectMapper.writeValueAsString(principal);
+            printWriter.write(payload);
+            resp.setStatus(201);
+        } catch (InvalidInformationException | MismatchedInputException e) {
+            resp.setStatus(400);
+            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
+            printWriter.write(objectMapper.writeValueAsString(errorResponse));
+        } catch (DataSourceException dre) {
+            resp.setStatus(409);
+            ErrorResponse errorResponse = new ErrorResponse(409, dre.getMessage());
+            printWriter.write(objectMapper.writeValueAsString(errorResponse));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.setStatus(500);
         }
     }
 }
