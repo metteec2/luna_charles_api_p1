@@ -32,6 +32,7 @@ public class CourseServices {
      */
     public Course createCourse(Course newCourse) {
         isCourseValid(newCourse);
+        newCourse.setStudents(new String[0]);
         return courseRepo.save(newCourse);
     }
 
