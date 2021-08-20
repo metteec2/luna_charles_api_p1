@@ -99,7 +99,7 @@ public class CourseServices {
      * @param number
      * @param student
      */
-    public  void removeFromCourse(String number, Student student) {
+    public void removeFromCourse(String number, Student student) {
         courseRepo.removeStudent(number,student.getEmail());
     }
 
