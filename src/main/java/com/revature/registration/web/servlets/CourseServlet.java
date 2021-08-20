@@ -37,11 +37,6 @@ public class CourseServlet extends HttpServlet {
         resp.setContentType("application/json");
 
 
-        try{
-            userServices.findFacultyById
-
-        }
-
         /*
               need a way to access FacultyRepository to find the Faculty object
               (to send as a parameter into the .findByFaculty method in CourseRepository)
