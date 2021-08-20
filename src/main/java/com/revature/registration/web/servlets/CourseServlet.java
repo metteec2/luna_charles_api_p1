@@ -3,19 +3,23 @@ package com.revature.registration.web.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.revature.registration.models.Course;
+import com.revature.registration.models.Faculty;
 import com.revature.registration.services.CourseServices;
 import com.revature.registration.services.UserServices;
 import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
 import com.revature.registration.web.dtos.CourseDTO;
 import com.revature.registration.web.dtos.ErrorResponse;
+import com.revature.registration.web.dtos.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class CourseServlet extends HttpServlet {
 
@@ -32,17 +36,46 @@ public class CourseServlet extends HttpServlet {
     //for getting courses that a faculty member teaches
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //#TODO logic for getting courses that a faculty member teaches
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
+        try {
+            HttpSession session = req.getSession(false);
+            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
 
-        /*
-              need a way to access FacultyRepository to find the Faculty object
-              (to send as a parameter into the .findByFaculty method in CourseRepository)
-              but we can only access FacultyRepo through UserServices, not through
-              CourseServices.
-         */
+            if(principal == null){
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            } else {
+                Faculty faculty = userServices.findFacultyById(principal.getId());
+                List<Course> taughtCourses = courseServices.getTaughtCourses(faculty);
+                //
+                for(Course c : taughtCourses){
+                    System.out.println(c);
+                }
+                //
+                String payload = objectMapper.writeValueAsString(taughtCourses);
+                respWriter.write(payload);
+                resp.setStatus(200);
+            }
+        } catch (InvalidInformationException iie) {
+            iie.printStackTrace();
+            resp.setStatus(401);
+            ErrorResponse errorResponse = new ErrorResponse(401,iie.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
+        } catch (DataSourceException dse) {
+            resp.setStatus(500);
+            ErrorResponse errorResponse = new ErrorResponse(500,dse.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.setStatus(500);
+            ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
+        }
 
     }
 
