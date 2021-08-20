@@ -44,8 +44,7 @@ public class FacultyServlet extends HttpServlet {
                 return;
             } else {
                 System.out.println(principal);
-                Faculty faculty = userServices.findFacultyById(principal.getId());
-                String payload = objectMapper.writeValueAsString(faculty);
+                String payload = objectMapper.writeValueAsString(principal);
                 respWriter.write(payload);
             }
         } catch (InvalidInformationException iie) {

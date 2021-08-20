@@ -46,8 +46,7 @@ public class StudentServlet extends HttpServlet {
                 return;
             } else {
                 System.out.println(principal);
-                Student student = userServices.findStudentById(principal.getId());
-                String payload = objectMapper.writeValueAsString(student);
+                String payload = objectMapper.writeValueAsString(principal);
                 respWriter.write(payload);
             }
         } catch (InvalidInformationException iie) {
