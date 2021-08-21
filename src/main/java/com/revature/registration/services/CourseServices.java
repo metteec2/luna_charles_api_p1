@@ -84,9 +84,25 @@ public class CourseServices {
      * @param number
      * @param student
      */
-    public void registerForCourse(String number, Student student) {
+    public boolean registerForCourse(String number, Student student) {
         try {
-            courseRepo.addStudent(number, student.getEmail());
+            return courseRepo.addStudent(number, student.getEmail());
+        } catch (Exception e) {
+            logger.error("A problem occurred while trying to add student to course list, " +
+                    "check that you aren't already registered");
+            throw new DataSourceException(e.getMessage(),e);
+        }
+    }
+
+    //#TODO look over this overloaded method / added by Charles
+    /**
+     * registerForCourse() uses CourseRepository to add a student to a Course's array of Students.
+     * @param number
+     * @param email
+     */
+    public boolean registerForCourse(String number, String email) {
+        try {
+            return courseRepo.addStudent(number, email);
         } catch (Exception e) {
             logger.error("A problem occurred while trying to add student to course list, " +
                     "check that you aren't already registered");
@@ -99,8 +115,18 @@ public class CourseServices {
      * @param number
      * @param student
      */
-    public void removeFromCourse(String number, Student student) {
-        courseRepo.removeStudent(number,student.getEmail());
+    public boolean removeFromCourse(String number, Student student) {
+        return courseRepo.removeStudent(number,student.getEmail());
+    }
+
+    //#TODO look over this overloaded method / added by Charles
+    /**
+     * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
+     * @param number
+     * @param email
+     */
+    public boolean removeFromCourse(String number, String email) {
+        return courseRepo.removeStudent(number,email);
     }
 
     /**
