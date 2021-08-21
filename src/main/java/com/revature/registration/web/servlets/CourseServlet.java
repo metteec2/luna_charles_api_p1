@@ -9,6 +9,7 @@ import com.revature.registration.services.UserServices;
 import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
 import com.revature.registration.web.dtos.CourseDTO;
+import com.revature.registration.web.dtos.CourseEditDTO;
 import com.revature.registration.web.dtos.ErrorResponse;
 import com.revature.registration.web.dtos.Principal;
 
@@ -26,6 +27,8 @@ public class CourseServlet extends HttpServlet {
     private final CourseServices courseServices;
     private final UserServices userServices;
     private final ObjectMapper objectMapper;
+
+    //#TODO ensure that all HTTP status codes are correct
 
     public CourseServlet(CourseServices courseServices, UserServices userServices, ObjectMapper objectMapper) {
         this.courseServices = courseServices;
@@ -52,11 +55,6 @@ public class CourseServlet extends HttpServlet {
             } else {
                 Faculty faculty = userServices.findFacultyById(principal.getId());
                 List<Course> taughtCourses = courseServices.getTaughtCourses(faculty);
-                //
-                for(Course c : taughtCourses){
-                    System.out.println(c);
-                }
-                //
                 String payload = objectMapper.writeValueAsString(taughtCourses);
                 respWriter.write(payload);
                 resp.setStatus(200);
@@ -105,20 +103,30 @@ public class CourseServlet extends HttpServlet {
         }
     }
 
+    //for updating course info
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //#TODO logic for updating course info
 
         PrintWriter printWriter = resp.getWriter();
         resp.setContentType("application/json");
 
-        /*
-                to update course, we need
-                    1. String currentNumber
-                    2. String field
-                    3. String newValue
-                        How to get all three in a single input stream?
-         */
+        try {
+            CourseEditDTO courseEdit = objectMapper.readValue(req.getInputStream(), CourseEditDTO.class);
+            boolean accepted = courseServices.updateCourse(courseEdit.getCurrentNumber(), courseEdit.getField(), courseEdit.getNewValue());
+            if(accepted) {
+                String payload = objectMapper.writeValueAsString(accepted);
+                printWriter.write(payload);
+                resp.setStatus(200); //accepted
+            } else {
+                resp.setStatus(404); //not found
+                ErrorResponse errorResponse = new ErrorResponse(404, "Resource does not exist");
+                printWriter.write(objectMapper.writeValueAsString(errorResponse));
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.setStatus(500);
+        }
     }
 
     //for deleting a course
