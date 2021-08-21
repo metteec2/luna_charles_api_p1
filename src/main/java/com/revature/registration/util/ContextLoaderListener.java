@@ -2,7 +2,6 @@ package com.revature.registration.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.revature.registration.repositories.CourseRepository;
 import com.revature.registration.repositories.FacultyRepository;
 import com.revature.registration.repositories.StudentRepository;
@@ -32,7 +31,7 @@ public class ContextLoaderListener implements ServletContextListener {
         WelcomeServlet welcomeServlet = new WelcomeServlet(objectMapper);
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         CourseServlet courseServlet = new CourseServlet(courseServices, userServices, objectMapper);
-        RegistrationServlet registrationServlet = new RegistrationServlet();
+        RegistrationServlet registrationServlet = new RegistrationServlet(userServices, objectMapper);
         StudentServlet studentServlet = new StudentServlet(userServices,courseServices,objectMapper);
         FacultyServlet facultyServlet = new FacultyServlet(userServices,objectMapper);
         AuthStudentServlet authStudentServlet = new AuthStudentServlet(userServices,objectMapper);
