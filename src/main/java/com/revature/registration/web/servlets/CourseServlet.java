@@ -52,11 +52,7 @@ public class CourseServlet extends HttpServlet {
             } else {
                 Faculty faculty = userServices.findFacultyById(principal.getId());
                 List<Course> taughtCourses = courseServices.getTaughtCourses(faculty);
-                //
-                for(Course c : taughtCourses){
-                    System.out.println(c);
-                }
-                //
+
                 String payload = objectMapper.writeValueAsString(taughtCourses);
                 respWriter.write(payload);
                 resp.setStatus(200);
