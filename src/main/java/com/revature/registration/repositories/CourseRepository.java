@@ -213,7 +213,32 @@ public class CourseRepository{
         MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
         MongoDatabase courseDb = mongoClient.getDatabase("p0");
         MongoCollection<Document> courseCollection = courseDb.getCollection("course");
-        Document updateCourseDoc = new Document(field,newValue);
+
+        if (field.equals("number") && courseCollection.find(Filters.eq("number",newValue)) != null) {
+            return false;
+        }
+
+        if (courseCollection.find(Filters.eq("number",currentNumber)) == null) {
+            return false;
+        }
+
+        courseCollection.updateOne(Filters.eq("number",currentNumber),
+                Updates.set(field,newValue));
+        return true;
+    }
+
+    /**
+     * update takes in a course number, which it uses to find the course to change the value
+     * of a specified field to newValue.
+     * @param currentNumber
+     * @param field
+     * @param newValue
+     * @return
+     */
+    public boolean update(String currentNumber, String field, int newValue) {
+        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+        MongoDatabase courseDb = mongoClient.getDatabase("p0");
+        MongoCollection<Document> courseCollection = courseDb.getCollection("course");
 
         if (field.equals("number") && courseCollection.find(Filters.eq("number",newValue)) != null) {
             return false;
