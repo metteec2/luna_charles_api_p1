@@ -11,6 +11,7 @@ import com.revature.registration.util.exceptions.InvalidInformationException;
 import com.revature.registration.web.dtos.CourseDTO;
 import com.revature.registration.web.dtos.ErrorResponse;
 import com.revature.registration.web.dtos.Principal;
+import com.revature.registration.web.dtos.StudentDTO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -43,8 +44,7 @@ public class StudentServlet extends HttpServlet {
 
 
         try {
-            HttpSession session = req.getSession(false);
-            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+            Principal principal = (Principal) req.getAttribute("principal");
 
             if (principal == null) {
                 String msg = "No session found, please login.";
@@ -56,7 +56,8 @@ public class StudentServlet extends HttpServlet {
                 System.out.println(principal);
                 // TODO overload getRegisteredCourses so that it takes in a student email, or maybe id
                 Student student = userServices.findStudentById(principal.getId());
-                String payload = objectMapper.writeValueAsString(principal);
+                StudentDTO studentDTO = new StudentDTO(student);
+                String payload = objectMapper.writeValueAsString(studentDTO);
                 for (Course c : courseServices.getRegisteredCourses(student)) {
                     CourseDTO dto = new CourseDTO(c);
                     payload += ",\n";

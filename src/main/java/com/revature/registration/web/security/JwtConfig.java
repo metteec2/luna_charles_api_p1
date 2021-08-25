@@ -26,7 +26,7 @@ public class JwtConfig {
             this.header = appProperties.getProperty("jwt.header");
             this.prefix = appProperties.getProperty("jwt.prefix");
             this.secret = appProperties.getProperty("jwt.secret");
-            this.expiration = Integer.parseInt(appProperties.getProperty("jwt.header"));
+            this.expiration = Integer.parseInt(appProperties.getProperty("jwt.expiration"));
 
             byte[] secretBytes = DatatypeConverter.parseBase64Binary(this.secret);
             signingKey = new SecretKeySpec(secretBytes,sigAlg.getJcaName());

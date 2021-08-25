@@ -33,8 +33,7 @@ public class FacultyServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            HttpSession session = req.getSession(false);
-            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+            Principal principal = (Principal) req.getAttribute("principal");
 
             if (principal == null) {
                 String msg = "No session found, please login.";
