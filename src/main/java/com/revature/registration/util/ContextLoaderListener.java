@@ -39,13 +39,12 @@ public class ContextLoaderListener implements ServletContextListener {
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         CourseServlet courseServlet = new CourseServlet(courseServices, userServices, objectMapper);
         RegistrationServlet registrationServlet = new RegistrationServlet(userServices, courseServices, objectMapper);
-        StudentServlet studentServlet = new StudentServlet(userServices,courseServices,objectMapper);
-        FacultyServlet facultyServlet = new FacultyServlet(userServices,objectMapper);
-        AuthStudentServlet authStudentServlet = new AuthStudentServlet(userServices,objectMapper,tokenGenerator);
-        AuthFacultyServlet authFacultyServlet = new AuthFacultyServlet(userServices,objectMapper);
+        StudentServlet studentServlet = new StudentServlet(userServices, courseServices, objectMapper);
+        FacultyServlet facultyServlet = new FacultyServlet(userServices, objectMapper);
+        AuthStudentServlet authStudentServlet = new AuthStudentServlet(userServices,objectMapper, tokenGenerator);
+        AuthFacultyServlet authFacultyServlet = new AuthFacultyServlet(userServices,objectMapper, tokenGenerator);
 
         ServletContext servletContext = sce.getServletContext();
-
         servletContext.addFilter("AuthFilter", authFilter).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         servletContext.addServlet("HealthCheckServlet",healthCheckServlet).addMapping("/health");
         servletContext.addServlet("CourseServlet",courseServlet).addMapping("/course");

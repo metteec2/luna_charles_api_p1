@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -45,8 +44,7 @@ public class AuthStudentServlet extends HttpServlet {
             String payload = objectMapper.writeValueAsString(principal);
             respWriter.write(payload);
 
-            // the user's session will stay with them over time, meaning we can reference it when needed.
-            // in this case, we add an "auth-user" attribute so that we can ensure a user is meant to be on a webpage later on
+
             String token = tokenGenerator.createToken(principal);
             resp.setHeader(tokenGenerator.getJwtConfig().getHeader(), token);
 

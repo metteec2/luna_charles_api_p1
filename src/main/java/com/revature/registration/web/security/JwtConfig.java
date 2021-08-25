@@ -21,7 +21,7 @@ public class JwtConfig {
         try {
             Properties appProperties = new Properties();
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            appProperties.load(loader.getResourceAsStream("application.properties"));
+            appProperties.load(loader.getResourceAsStream("app.properties"));
 
             this.header = appProperties.getProperty("jwt.header");
             this.prefix = appProperties.getProperty("jwt.prefix");
