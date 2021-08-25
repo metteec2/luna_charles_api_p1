@@ -119,13 +119,14 @@ public class CourseServlet extends HttpServlet {
 
         try {
             Principal principal = (Principal) req.getAttribute("principal");
-
             if(principal == null) {
-                    String msg = ("No session found, please login.");
-                    resp.setStatus(401);
-                    ErrorResponse errResp = new ErrorResponse(401, msg);
-                    respWriter.write(objectMapper.writeValueAsString(errResp));
-                    return;
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            }
+
             CourseEditDTO courseEdit = objectMapper.readValue(req.getInputStream(), CourseEditDTO.class);
             boolean accepted = courseServices.updateCourse(courseEdit.getCurrentNumber(), courseEdit.getField(), courseEdit.getNewValue());
             if(accepted) {
@@ -152,6 +153,15 @@ public class CourseServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
+            Principal principal = (Principal) req.getAttribute("principal");
+            if(principal == null) {
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            }
+
             String courseNumber = objectMapper.readValue(req.getInputStream(), String.class);
             boolean accepted = courseServices.removeCourse(courseNumber);
             if(!accepted){
