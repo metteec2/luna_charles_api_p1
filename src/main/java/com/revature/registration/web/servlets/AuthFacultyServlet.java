@@ -6,12 +6,12 @@ import com.revature.registration.util.exceptions.AuthenticationException;
 import com.revature.registration.web.dtos.Credentials;
 import com.revature.registration.web.dtos.ErrorResponse;
 import com.revature.registration.web.dtos.Principal;
+import com.revature.registration.web.security.TokenGenerator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -19,10 +19,12 @@ public class AuthFacultyServlet extends HttpServlet {
 
     private final UserServices userServices;
     private final ObjectMapper objectMapper;
+    private final TokenGenerator tokenGenerator;
 
-    public AuthFacultyServlet(UserServices userServices, ObjectMapper objectMapper) {
+    public AuthFacultyServlet(UserServices userServices, ObjectMapper objectMapper, TokenGenerator tokenGenerator) {
         this.userServices = userServices;
         this.objectMapper = objectMapper;
+        this.tokenGenerator = tokenGenerator;
     }
 
     @Override
@@ -40,8 +42,8 @@ public class AuthFacultyServlet extends HttpServlet {
             String payload = objectMapper.writeValueAsString(principal);
             respWriter.write(payload);
 
-            HttpSession session = req.getSession();
-            session.setAttribute("auth-user",principal);
+            String token = tokenGenerator.createToken(principal);
+            resp.setHeader(tokenGenerator.getJwtConfig().getHeader(), token);
 
         } catch (AuthenticationException ae){
             resp.setStatus(401);
