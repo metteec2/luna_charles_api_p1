@@ -1,5 +1,6 @@
 package com.revature.registration.web.filters;
 
+import com.revature.registration.web.dtos.Principal;
 import com.revature.registration.web.security.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter("/*")
 public class AuthFilter extends HttpFilter {
 
     private final JwtConfig jwtConfig;
@@ -34,16 +34,17 @@ public class AuthFilter extends HttpFilter {
 
             if (header == null || !header.startsWith(jwtConfig.getPrefix())) {
                 // use logger here to warn users
+                return;
             }
 
             String token = header.replaceAll(jwtConfig.getPrefix(), "");
 
             Claims jwtClaims = Jwts.parser()
-                                   .setSigningKey(token)
+                                   .setSigningKey(jwtConfig.getSigningKey())
                                    .parseClaimsJws(token)
                                    .getBody();
 
-//            req.setAttribute("principal", new Principal(jwtClaims)); // TODO make a claims constructor for principal
+            req.setAttribute("principal", new Principal(jwtClaims));
 
         } catch (Exception e) {
             e.printStackTrace();

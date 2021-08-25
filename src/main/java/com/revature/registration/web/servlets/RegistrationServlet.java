@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -36,8 +35,7 @@ public class RegistrationServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            HttpSession session = req.getSession(false);
-            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+            Principal principal = (Principal) req.getAttribute("principal");
             // need to run this method, because it will throw an invalid information exception if no user is found
             userServices.findStudentById(principal.getId());
 
@@ -70,8 +68,7 @@ public class RegistrationServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            HttpSession session = req.getSession(false);
-            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+            Principal principal = (Principal) req.getAttribute("principal");
 
             if(principal == null){
                 String msg = "No session found, please login.";

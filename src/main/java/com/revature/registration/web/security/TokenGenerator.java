@@ -20,12 +20,16 @@ public class TokenGenerator {
         JwtBuilder tokenBuilder = Jwts.builder()
                                       .setId(subject.getId())
                                       .setSubject(subject.getEmail())
-                                      //.claim("role", subject.getRole().toString()) // specify user's role here (will need to add role to principal)
+                                      .claim("role", subject.getRole())
                                       .setIssuer("revature")
                                       .setIssuedAt(new Date(now))
                                       .setExpiration(new Date(now + jwtConfig.getExpiration()))
                                       .signWith(jwtConfig.getSigAlg(), jwtConfig.getSigningKey());
 
         return jwtConfig.getPrefix() + tokenBuilder.compact();
+    }
+
+    public JwtConfig getJwtConfig() {
+        return jwtConfig;
     }
 }
