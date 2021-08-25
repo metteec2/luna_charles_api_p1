@@ -7,7 +7,7 @@
     <display-name>Registration</display-name>
 
     <welcome-file-list>
-        <welcome-file>welcome</welcome-file>
+        <welcome-file>/health</welcome-file>
     </welcome-file-list>
 
     <listener>

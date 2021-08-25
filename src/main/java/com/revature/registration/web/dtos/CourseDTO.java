@@ -7,12 +7,12 @@ import java.util.Objects;
 
 public class CourseDTO {
 
-    public String number;
-    public String name;
-    public String description;
-    public String professor;
-    public int capacity;
-    public String[] students;
+    private String number;
+    private String name;
+    private String description;
+    private String professor;
+    private int capacity;
+    private String[] students;
 
     public CourseDTO(Course course){
         this.number = course.getNumber();

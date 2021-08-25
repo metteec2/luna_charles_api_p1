@@ -2,7 +2,6 @@ package com.revature.registration.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.revature.registration.repositories.CourseRepository;
 import com.revature.registration.repositories.FacultyRepository;
 import com.revature.registration.repositories.StudentRepository;
@@ -36,21 +35,18 @@ public class ContextLoaderListener implements ServletContextListener {
         CourseServices courseServices = new CourseServices(courseRepository);
         UserServices userServices = new UserServices(studentRepository,facultyRepository);
 
-
         AuthFilter authFilter = new AuthFilter(jwtConfig);
-
-        WelcomeServlet welcomeServlet = new WelcomeServlet(objectMapper);
         HealthCheckServlet healthCheckServlet = new HealthCheckServlet();
         CourseServlet courseServlet = new CourseServlet(courseServices, userServices, objectMapper);
-        RegistrationServlet registrationServlet = new RegistrationServlet(courseServices,userServices,objectMapper);
+        RegistrationServlet registrationServlet = new RegistrationServlet(userServices, courseServices, objectMapper);
         StudentServlet studentServlet = new StudentServlet(userServices,courseServices,objectMapper);
         FacultyServlet facultyServlet = new FacultyServlet(userServices,objectMapper);
         AuthStudentServlet authStudentServlet = new AuthStudentServlet(userServices,objectMapper,tokenGenerator);
         AuthFacultyServlet authFacultyServlet = new AuthFacultyServlet(userServices,objectMapper);
 
         ServletContext servletContext = sce.getServletContext();
+
         servletContext.addFilter("AuthFilter", authFilter).addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-        servletContext.addServlet("WelcomeServlet",welcomeServlet).addMapping("/welcome");
         servletContext.addServlet("HealthCheckServlet",healthCheckServlet).addMapping("/health");
         servletContext.addServlet("CourseServlet",courseServlet).addMapping("/course");
         servletContext.addServlet("RegistrationServlet",registrationServlet).addMapping("/registration");
