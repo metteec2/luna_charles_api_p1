@@ -78,23 +78,32 @@ public class CourseServlet extends HttpServlet {
     //For adding a course
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
-            Course newCourse = objectMapper.readValue(req.getInputStream(), Course.class);
-            CourseDTO courseDTO = new CourseDTO(courseServices.createCourse(newCourse));
-            String payload = objectMapper.writeValueAsString(courseDTO);
-            printWriter.write(payload);
-            resp.setStatus(201);
+            Principal principal = (Principal) req.getAttribute("principal");
+            if(principal == null) {
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            } else {
+                Course newCourse = objectMapper.readValue(req.getInputStream(), Course.class);
+                CourseDTO courseDTO = new CourseDTO(courseServices.createCourse(newCourse));
+                String payload = objectMapper.writeValueAsString(courseDTO);
+                respWriter.write(payload);
+                resp.setStatus(201);
+            }
         } catch (InvalidInformationException | MismatchedInputException e) {
             resp.setStatus(400);
             ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            printWriter.write(objectMapper.writeValueAsString(errorResponse));
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (DataSourceException dse) {
             resp.setStatus(409);
             ErrorResponse errorResponse = new ErrorResponse(409, dse.getMessage());
-            printWriter.write(objectMapper.writeValueAsString(errorResponse));
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500);
@@ -105,20 +114,28 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
+            Principal principal = (Principal) req.getAttribute("principal");
+
+            if(principal == null) {
+                    String msg = ("No session found, please login.");
+                    resp.setStatus(401);
+                    ErrorResponse errResp = new ErrorResponse(401, msg);
+                    respWriter.write(objectMapper.writeValueAsString(errResp));
+                    return;
             CourseEditDTO courseEdit = objectMapper.readValue(req.getInputStream(), CourseEditDTO.class);
             boolean accepted = courseServices.updateCourse(courseEdit.getCurrentNumber(), courseEdit.getField(), courseEdit.getNewValue());
             if(accepted) {
                 String payload = objectMapper.writeValueAsString(accepted);
-                printWriter.write(payload);
+                respWriter.write(payload);
                 resp.setStatus(200); //accepted
             } else {
                 resp.setStatus(404); //not found
                 ErrorResponse errorResponse = new ErrorResponse(404, "Resource does not exist");
-                printWriter.write(objectMapper.writeValueAsString(errorResponse));
+                respWriter.write(objectMapper.writeValueAsString(errorResponse));
                 return;
             }
         } catch (Exception e) {
@@ -131,7 +148,7 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
@@ -140,11 +157,11 @@ public class CourseServlet extends HttpServlet {
             if(!accepted){
                 resp.setStatus(404);
                 ErrorResponse errorResponse = new ErrorResponse(404, "Resource does not exist");
-                printWriter.write(objectMapper.writeValueAsString(errorResponse));
+                respWriter.write(objectMapper.writeValueAsString(errorResponse));
                 return;
             } else {
                 String payload = objectMapper.writeValueAsString(accepted);
-                printWriter.write(payload);
+                respWriter.write(payload);
                 resp.setStatus(204);
             }
         } catch (Exception e){
