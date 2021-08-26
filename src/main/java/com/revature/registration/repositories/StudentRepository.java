@@ -31,18 +31,22 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     @Override
     public Student save(Student newStudent) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase studentDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> studentCollection = studentDb.getCollection("student");
-        Document newStudentDoc = new Document("firstName", newStudent.getFirstName())
-                .append("lastName",newStudent.getLastName())
-                .append("email",newStudent.getEmail())
-                .append("password",newStudent.getPassword());
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase studentDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> studentCollection = studentDb.getCollection("student");
+            Document newStudentDoc = new Document("firstName", newStudent.getFirstName())
+                    .append("lastName", newStudent.getLastName())
+                    .append("email", newStudent.getEmail())
+                    .append("password", newStudent.getPassword());
 
-        studentCollection.insertOne(newStudentDoc);
-        newStudent.setId(newStudentDoc.get("_id").toString());
+            studentCollection.insertOne(newStudentDoc);
+            newStudent.setId(newStudentDoc.get("_id").toString());
 
-        return newStudent;
+            return newStudent;
+        } catch (Exception e) {
+            throw new DataSourceException("An error occurred while saving to the database",e);
+        }
     }
 
     /**
