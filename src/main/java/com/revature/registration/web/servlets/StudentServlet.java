@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentServlet extends HttpServlet {
 
@@ -56,12 +58,13 @@ public class StudentServlet extends HttpServlet {
                 // TODO overload getRegisteredCourses so that it takes in a student email, or maybe id
                 Student student = userServices.findStudentById(principal.getId());
                 StudentDTO studentDTO = new StudentDTO(student);
-                String payload = objectMapper.writeValueAsString(studentDTO);
+                List<Object> queryResult = new ArrayList<>();
+                queryResult.add(studentDTO);
                 for (Course c : courseServices.getRegisteredCourses(student)) {
                     CourseDTO dto = new CourseDTO(c);
-                    payload += ",\n";
-                    payload += objectMapper.writeValueAsString(dto);
+                    queryResult.add(dto);
                 }
+                String payload = objectMapper.writeValueAsString(queryResult);
                 respWriter.write(payload);
             }
         } catch (InvalidInformationException iie) {
