@@ -55,7 +55,7 @@ public class RegistrationServlet extends HttpServlet {
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             resp.setStatus(500);
-            ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
+            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
@@ -107,8 +107,9 @@ public class RegistrationServlet extends HttpServlet {
                 }
             }
         } catch (Exception e){
-            e.printStackTrace();
             resp.setStatus(500);
+            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
 }

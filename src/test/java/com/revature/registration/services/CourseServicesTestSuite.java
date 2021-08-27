@@ -117,10 +117,51 @@ public class CourseServicesTestSuite {
         sut.isCourseValid(inputCourse);
     }
 
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseNumber() {
+        // Arrange
+        Course inputCourse = new Course("     ","Discrete Mathematics",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenShortCourseNumber() {
+        // Arrange
+        Course inputCourse = new Course("short","Discrete Mathematics",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
     @Test(expected = InvalidInformationException.class)
     public void isCourseValid_throwsInvalidInformationException_whenGivenEmptyCourseName() {
         // Arrange
         Course inputCourse = new Course("math 102","",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseName() {
+        // Arrange
+        Course inputCourse = new Course("math 102","    ",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenShortCourseName() {
+        // Arrange
+        Course inputCourse = new Course("math 102","short",
                 "description","prof",12);
 
         // Act & Assert
