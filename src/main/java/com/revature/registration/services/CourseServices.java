@@ -169,7 +169,7 @@ public class CourseServices {
             throw new InvalidInformationException("Course description cannot be more than 279 characters");
         }
         if (course.getNumber() == null || course.getName() == null ||
-                course.getNumber().equals("") || course.getName().equals("")) {
+                course.getNumber().trim().equals("") || course.getName().trim().equals("")) {
 
             throw new InvalidInformationException("Course number/name cannot be null or empty");
         }

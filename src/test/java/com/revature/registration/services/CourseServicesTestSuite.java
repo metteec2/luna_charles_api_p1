@@ -118,9 +118,29 @@ public class CourseServicesTestSuite {
     }
 
     @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseNumber() {
+        // Arrange
+        Course inputCourse = new Course("     ","Discrete Mathematics",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
     public void isCourseValid_throwsInvalidInformationException_whenGivenEmptyCourseName() {
         // Arrange
         Course inputCourse = new Course("math 102","",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseName() {
+        // Arrange
+        Course inputCourse = new Course("math 102","    ",
                 "description","prof",12);
 
         // Act & Assert
