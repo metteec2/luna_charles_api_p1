@@ -45,8 +45,8 @@ public class CourseServices {
             return courseRepo.findAll();
         } catch (DataSourceException dse) {
             logger.error(dse.getMessage());
+            throw new DataSourceException(dse.getMessage(),dse);
         }
-        return null;
     }
 
     /**
@@ -75,8 +75,8 @@ public class CourseServices {
             return courseRepo.findByFaculty(faculty);
         } catch (DataSourceException dse) {
             logger.error(dse.getMessage());
+            throw new DataSourceException(dse.getMessage(),dse);
         }
-        return null;
     }
 
     /**

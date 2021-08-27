@@ -274,7 +274,7 @@ public class CourseRepository{
      * @param email
      * @return
      */
-    public boolean addStudent(String courseNumber, String email) {
+    public boolean addStudent(String courseNumber, String email) { //
         try {
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase courseDb = mongoClient.getDatabase("p0");
