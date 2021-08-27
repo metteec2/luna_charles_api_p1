@@ -170,9 +170,16 @@ public class CourseServices {
         }
         if (course.getNumber() == null || course.getName() == null ||
                 course.getNumber().trim().equals("") || course.getName().trim().equals("")) {
-
             throw new InvalidInformationException("Course number/name cannot be null or empty");
         }
+        if (course.getNumber().length() < 6){
+            throw new InvalidInformationException("Course number length must be at least 7!");
+        }
+        if (course.getName().length() < 6){
+            throw new InvalidInformationException("Course number length must be at least 7!");
+        }
+
+
         return true;
     }
 
