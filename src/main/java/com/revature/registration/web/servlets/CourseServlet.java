@@ -17,7 +17,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -43,8 +42,7 @@ public class CourseServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            HttpSession session = req.getSession(false);
-            Principal principal = (session == null) ? null : (Principal) session.getAttribute("auth-user");
+            Principal principal = (Principal) req.getAttribute("principal");
 
             if(principal == null){
                 String msg = ("No session found, please login.");
@@ -85,11 +83,20 @@ public class CourseServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
-            Course newCourse = objectMapper.readValue(req.getInputStream(), Course.class);
-            CourseDTO courseDTO = new CourseDTO(courseServices.createCourse(newCourse));
-            String payload = objectMapper.writeValueAsString(courseDTO);
-            respWriter.write(payload);
-            resp.setStatus(201);
+            Principal principal = (Principal) req.getAttribute("principal");
+            if(principal == null) {
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            } else {
+                Course newCourse = objectMapper.readValue(req.getInputStream(), Course.class);
+                CourseDTO courseDTO = new CourseDTO(courseServices.createCourse(newCourse));
+                String payload = objectMapper.writeValueAsString(courseDTO);
+                respWriter.write(payload);
+                resp.setStatus(201);
+            }
         } catch (InvalidInformationException | MismatchedInputException e) {
             e.printStackTrace();
             resp.setStatus(400);
@@ -103,7 +110,7 @@ public class CourseServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500);
-            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
@@ -116,6 +123,15 @@ public class CourseServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
+            Principal principal = (Principal) req.getAttribute("principal");
+            if(principal == null) {
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            }
+
             CourseEditDTO courseEdit = objectMapper.readValue(req.getInputStream(), CourseEditDTO.class);
             boolean accepted = courseServices.updateCourse(courseEdit.getCurrentNumber(), courseEdit.getField(), courseEdit.getNewValue());
             if(accepted) {
@@ -131,7 +147,7 @@ public class CourseServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500);
-            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
@@ -144,6 +160,15 @@ public class CourseServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         try {
+            Principal principal = (Principal) req.getAttribute("principal");
+            if(principal == null) {
+                String msg = ("No session found, please login.");
+                resp.setStatus(401);
+                ErrorResponse errResp = new ErrorResponse(401, msg);
+                respWriter.write(objectMapper.writeValueAsString(errResp));
+                return;
+            }
+
             String courseNumber = objectMapper.readValue(req.getInputStream(), String.class);
             boolean accepted = courseServices.removeCourse(courseNumber);
             if(!accepted){
@@ -159,7 +184,7 @@ public class CourseServlet extends HttpServlet {
         } catch (Exception e){
             e.printStackTrace();
             resp.setStatus(500);
-            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(500,"an unexpected error occurred");
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
 

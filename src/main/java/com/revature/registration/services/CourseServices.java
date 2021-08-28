@@ -45,8 +45,8 @@ public class CourseServices {
             return courseRepo.findAll();
         } catch (DataSourceException dse) {
             logger.error(dse.getMessage());
+            throw new DataSourceException(dse.getMessage(),dse);
         }
-        return null;
     }
 
     /**
@@ -75,8 +75,8 @@ public class CourseServices {
             return courseRepo.findByFaculty(faculty);
         } catch (DataSourceException dse) {
             logger.error(dse.getMessage());
+            throw new DataSourceException(dse.getMessage(),dse);
         }
-        return null;
     }
 
     /**
@@ -141,10 +141,6 @@ public class CourseServices {
         return courseRepo.update(currentNumber,field,newValue);
     }
 
-    public boolean updateCourse(String currentNumber,String field, int newValue) {
-        return courseRepo.update(currentNumber,field,newValue);
-    }
-
     /**
      * removeCourse takes in a course number and passes it to CourseRepository to delete the Course with that number.
      * @param number
@@ -169,10 +165,17 @@ public class CourseServices {
             throw new InvalidInformationException("Course description cannot be more than 279 characters");
         }
         if (course.getNumber() == null || course.getName() == null ||
-                course.getNumber().equals("") || course.getName().equals("")) {
-
+                course.getNumber().trim().equals("") || course.getName().trim().equals("")) {
             throw new InvalidInformationException("Course number/name cannot be null or empty");
         }
+        if (course.getNumber().length() < 6){
+            throw new InvalidInformationException("Course number length must be at least 7!");
+        }
+        if (course.getName().length() < 6){
+            throw new InvalidInformationException("Course number length must be at least 7!");
+        }
+
+
         return true;
     }
 

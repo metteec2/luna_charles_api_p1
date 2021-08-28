@@ -2,6 +2,7 @@ package com.revature.registration.web.dtos;
 
 import com.revature.registration.models.Faculty;
 import com.revature.registration.models.Student;
+import io.jsonwebtoken.Claims;
 
 import java.util.Objects;
 
@@ -9,23 +10,26 @@ public class Principal {
 
     private String id;
     private String email;
-    private String firstName;
-    private String lastName;
+    private String role;
 
     public Principal() {}
+
+    public Principal(Claims jwtClaims) {
+        this.id = jwtClaims.getId();
+        this.email = jwtClaims.getSubject();
+        this.role = jwtClaims.get("role", String.class);
+    }
 
     public Principal(Student student) {
         this.id = student.getId();
         this.email = student.getEmail();
-        this.firstName = student.getFirstName();
-        this.lastName = student.getLastName();
+        this.role = "student";
     }
 
     public Principal(Faculty faculty) {
         this.id = faculty.getId();
         this.email = faculty.getEmail();
-        this.firstName = faculty.getFirstName();
-        this.lastName = faculty.getLastName();
+        this.role = "faculty";
     }
 
     public String getId() {
@@ -44,20 +48,12 @@ public class Principal {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getRole() {
+        return role;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override

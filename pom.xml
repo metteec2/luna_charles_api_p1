@@ -73,7 +73,10 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.0</version>
         </dependency>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9c317ec60113d40b99a6180abb1000d41dedf333
     </dependencies>
 
     <build>
