@@ -65,6 +65,7 @@ public class CourseServlet extends HttpServlet {
             ErrorResponse errorResponse = new ErrorResponse(401,iie.getMessage());
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (DataSourceException dse) {
+            dse.printStackTrace();
             resp.setStatus(500);
             ErrorResponse errorResponse = new ErrorResponse(500,dse.getMessage());
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
@@ -80,26 +81,30 @@ public class CourseServlet extends HttpServlet {
     //For adding a course
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
             Course newCourse = objectMapper.readValue(req.getInputStream(), Course.class);
             CourseDTO courseDTO = new CourseDTO(courseServices.createCourse(newCourse));
             String payload = objectMapper.writeValueAsString(courseDTO);
-            printWriter.write(payload);
+            respWriter.write(payload);
             resp.setStatus(201);
         } catch (InvalidInformationException | MismatchedInputException e) {
+            e.printStackTrace();
             resp.setStatus(400);
             ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            printWriter.write(objectMapper.writeValueAsString(errorResponse));
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (DataSourceException dse) {
+            dse.printStackTrace();
             resp.setStatus(409);
             ErrorResponse errorResponse = new ErrorResponse(409, dse.getMessage());
-            printWriter.write(objectMapper.writeValueAsString(errorResponse));
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500);
+            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
 
@@ -107,7 +112,7 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
@@ -115,17 +120,19 @@ public class CourseServlet extends HttpServlet {
             boolean accepted = courseServices.updateCourse(courseEdit.getCurrentNumber(), courseEdit.getField(), courseEdit.getNewValue());
             if(accepted) {
                 String payload = objectMapper.writeValueAsString(accepted);
-                printWriter.write(payload);
+                respWriter.write(payload);
                 resp.setStatus(200); //accepted
             } else {
                 resp.setStatus(404); //not found
                 ErrorResponse errorResponse = new ErrorResponse(404, "Resource does not exist");
-                printWriter.write(objectMapper.writeValueAsString(errorResponse));
+                respWriter.write(objectMapper.writeValueAsString(errorResponse));
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500);
+            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
     }
 
@@ -133,7 +140,7 @@ public class CourseServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        PrintWriter printWriter = resp.getWriter();
+        PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
@@ -142,16 +149,18 @@ public class CourseServlet extends HttpServlet {
             if(!accepted){
                 resp.setStatus(404);
                 ErrorResponse errorResponse = new ErrorResponse(404, "Resource does not exist");
-                printWriter.write(objectMapper.writeValueAsString(errorResponse));
+                respWriter.write(objectMapper.writeValueAsString(errorResponse));
                 return;
             } else {
                 String payload = objectMapper.writeValueAsString(accepted);
-                printWriter.write(payload);
+                respWriter.write(payload);
                 resp.setStatus(204);
             }
         } catch (Exception e){
             e.printStackTrace();
             resp.setStatus(500);
+            ErrorResponse errorResponse = new ErrorResponse(500,e.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         }
 
     }
