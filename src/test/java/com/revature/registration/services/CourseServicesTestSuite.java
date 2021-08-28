@@ -117,7 +117,6 @@ public class CourseServicesTestSuite {
         sut.isCourseValid(inputCourse);
     }
 
-
     @Test(expected = InvalidInformationException.class)
     public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseNumber() {
         // Arrange
