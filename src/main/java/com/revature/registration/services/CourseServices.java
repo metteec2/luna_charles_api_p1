@@ -141,10 +141,6 @@ public class CourseServices {
         return courseRepo.update(currentNumber,field,newValue);
     }
 
-    public boolean updateCourse(String currentNumber,String field, int newValue) {
-        return courseRepo.update(currentNumber,field,newValue);
-    }
-
     /**
      * removeCourse takes in a course number and passes it to CourseRepository to delete the Course with that number.
      * @param number
