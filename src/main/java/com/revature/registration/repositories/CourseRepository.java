@@ -236,6 +236,8 @@ public class CourseRepository{
             }
             return true;
 
+        } catch (NumberFormatException nfe) {
+            throw new DataSourceException("The capacity provided was not a number",nfe);
         } catch (Exception e){
             logger.debug(e.getMessage());
             throw new DataSourceException("An unexpected exception occurred while trying to update a course",e);

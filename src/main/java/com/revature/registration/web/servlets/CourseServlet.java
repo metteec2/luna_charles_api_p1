@@ -144,6 +144,10 @@ public class CourseServlet extends HttpServlet {
                 respWriter.write(objectMapper.writeValueAsString(errorResponse));
                 return;
             }
+        } catch (DataSourceException dse) {
+            resp.setStatus(400);
+            ErrorResponse errorResponse = new ErrorResponse(400,dse.getMessage());
+            respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(500);
