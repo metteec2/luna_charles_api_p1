@@ -86,6 +86,19 @@ public class UserServicesTestSuite {
     }
 
     @Test(expected = InvalidInformationException.class)
+    public void isStudentValid_throwsInformationInvalidException_whenGivenWhiteSpaceParameters()  {
+        // Arrange
+        Student invalidStudent = new Student();
+        invalidStudent.setFirstName("    ");
+        invalidStudent.setLastName("    ");
+        invalidStudent.setEmail("@");
+        invalidStudent.setPassword("    ");
+
+        // Act & Assert
+        sut.isStudentValid(invalidStudent);
+    }
+
+    @Test(expected = InvalidInformationException.class)
     public void isStudentValid_throwsInformationInvalidException_whenGivenNullParameters()  {
         // Arrange
         Student invalidStudent = new Student();
@@ -209,4 +222,6 @@ public class UserServicesTestSuite {
             verify(mockFacultyRepo, times(1)).findByCredentials(givenEmail, givenPassword);
         }
     }
+
+
 }

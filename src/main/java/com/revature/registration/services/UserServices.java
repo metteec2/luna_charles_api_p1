@@ -99,9 +99,8 @@ public class UserServices {
         if (student.getPassword().length()<4) {
             throw new InvalidInformationException("Password provided was not long enough");
         }
-        if (student.getFirstName().equals("") || student.getLastName().equals("") || student.getEmail().equals("") ||
-                student.getPassword().equals("")) {
-
+        if (student.getFirstName().trim().equals("") || student.getLastName().trim().equals("") || student.getEmail().trim().equals("") ||
+                student.getPassword().trim().equals("")) {
             throw new InvalidInformationException("No field can be left blank");
         }
         if (studentRepo.findByEmail(student.getEmail()) != null) {
