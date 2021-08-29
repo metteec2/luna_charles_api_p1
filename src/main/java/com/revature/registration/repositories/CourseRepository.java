@@ -220,13 +220,13 @@ public class CourseRepository{
             MongoDatabase courseDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> courseCollection = courseDb.getCollection("course");
 
-            if (field.equals("number") && courseCollection.find(Filters.eq("number", newValue)) != null) {
-                return false;
-            }
-
-            if (courseCollection.find(Filters.eq("number", currentNumber)) == null) {
-                return false;
-            }
+//            if (field.equals("number") && courseCollection.find(Filters.eq("number", newValue)) != null) {
+//                return false;
+//            }
+//
+//            if (courseCollection.find(Filters.eq("number", currentNumber)) == null) {
+//                return false;
+//            }
 
             if (field.equals("capacity")) {
                 int nv = Integer.parseInt(newValue);
