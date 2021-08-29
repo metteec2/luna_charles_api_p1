@@ -72,7 +72,7 @@ jwt.expiration=86400000
 
 Below is described each endpoint of the API, what HTTP request methods are allowed on it, and what their request/response bodies will look like.
 
-Unless otherwise stated, each method requires an authorization token.
+Unless otherwise stated, each method requires an authorization token provided in a header called "Authorization".
 
 ### /authstudent
 
