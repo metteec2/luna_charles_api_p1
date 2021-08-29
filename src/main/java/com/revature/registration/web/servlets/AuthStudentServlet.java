@@ -27,7 +27,13 @@ public class AuthStudentServlet extends HttpServlet {
         this.tokenGenerator = tokenGenerator;
     }
 
-    // the endpoint that this servlet is mapped to will be hit by a Post request, triggering this method
+    /**
+     * Method for token-based authentication of a student. Overrides HttpServlet class's doPost method.
+     * @param req - contains JSON with email and password fields
+     * @param resp - contains JSON with an ID, email, and role (student) on successful login
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -43,7 +49,6 @@ public class AuthStudentServlet extends HttpServlet {
             // map the new object, the principal, back into json and send it to the ui
             String payload = objectMapper.writeValueAsString(principal);
             respWriter.write(payload);
-
 
             String token = tokenGenerator.createToken(principal);
             resp.setHeader(tokenGenerator.getJwtConfig().getHeader(), token);

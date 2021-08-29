@@ -28,6 +28,14 @@ public class RegistrationServlet extends HttpServlet {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Method for getting a list of all courses in the database
+     * Override's the HttpServlet class's doGet method.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -60,7 +68,14 @@ public class RegistrationServlet extends HttpServlet {
         }
     }
 
-    //for registering student to a course
+    /**
+     * Method for registering/unregistering a student to/from a course
+     * Override's the HttpServlet class's doPut method.
+     * @param req - includes fields for an action (register or unregister) and a course number
+     * @param resp - will indicate whether the action was successful
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

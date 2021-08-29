@@ -5,7 +5,6 @@ import com.revature.registration.models.Student;
 import com.revature.registration.repositories.FacultyRepository;
 import com.revature.registration.repositories.StudentRepository;
 import com.revature.registration.util.exceptions.AuthenticationException;
-import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
 
 /**

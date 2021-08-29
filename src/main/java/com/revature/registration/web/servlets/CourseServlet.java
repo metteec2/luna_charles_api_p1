@@ -27,15 +27,20 @@ public class CourseServlet extends HttpServlet {
     private final UserServices userServices;
     private final ObjectMapper objectMapper;
 
-    //#TODO ensure that all HTTP status codes are correct
-
     public CourseServlet(CourseServices courseServices, UserServices userServices, ObjectMapper objectMapper) {
         this.courseServices = courseServices;
         this.userServices = userServices;
         this.objectMapper = objectMapper;
     }
 
-    //for getting courses that a faculty member teaches
+    /**
+     * Method for getting a list of courses that the faculty member currently authenticated teaches
+     * Overrides HttpServlet class's doGet method.
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter respWriter = resp.getWriter();
@@ -76,7 +81,14 @@ public class CourseServlet extends HttpServlet {
 
     }
 
-    //For adding a course
+    /**
+     * Method for posting a new course to the database
+     * Overrides HttpServlet class's doPost method
+     * @param req - contains JSON with number, name, description, professor, capacity, and students fields
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter respWriter = resp.getWriter();
@@ -115,7 +127,14 @@ public class CourseServlet extends HttpServlet {
         }
     }
 
-    //for updating course info
+    /**
+     * Method for updating existing course
+     * Overrides HttpServlet class's doPut method
+     * @param req - has fields for current Number, field, and new Value
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -157,7 +176,14 @@ public class CourseServlet extends HttpServlet {
         }
     }
 
-    //for deleting a course
+    /**
+     * Method for deleting an existing course
+     * Overrides HttpServlet class's doDelete method
+     * @param req - contains number of the course to be deleted
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

@@ -59,7 +59,6 @@ public class StudentRepository implements CrudRepository<Student>{
     @Override
     public Student findById(String id) {
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
@@ -93,7 +92,6 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     public Student findByEmail(String email) {
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
@@ -128,7 +126,6 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     public Student findByCredentials(String email,String password) {
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
@@ -170,7 +167,6 @@ public class StudentRepository implements CrudRepository<Student>{
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
             Document queryDoc = new Document(field, newValue);
 
-            // TODO create if statements with other potential problems
             if (field.equals("email") && studentCollection.find(queryDoc) != null) {
                 return false;
             }
@@ -192,7 +188,6 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     @Override
     public boolean deleteById(String id) {
-        // TODO remove student from courses
 
         try {
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();

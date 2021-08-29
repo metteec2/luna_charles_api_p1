@@ -1,8 +1,6 @@
 package com.revature.registration.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.revature.registration.models.Faculty;
-import com.revature.registration.models.Student;
 import com.revature.registration.services.UserServices;
 import com.revature.registration.util.exceptions.DataSourceException;
 import com.revature.registration.util.exceptions.InvalidInformationException;
@@ -26,6 +24,14 @@ public class FacultyServlet extends HttpServlet {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Method for getting the principal of the faculty member
+     * Override's HttpServlet's doGet method
+     * @param req
+     * @param resp - contains principal of authorized user
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter respWriter = resp.getWriter();
@@ -41,7 +47,6 @@ public class FacultyServlet extends HttpServlet {
                 respWriter.write(objectMapper.writeValueAsString(errResp));
                 return;
             } else {
-                System.out.println(principal);
                 String payload = objectMapper.writeValueAsString(principal);
                 respWriter.write(payload);
             }

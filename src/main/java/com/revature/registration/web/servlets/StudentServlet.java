@@ -34,15 +34,20 @@ public class StudentServlet extends HttpServlet {
         this.courseServices = courseServices;
     }
 
-    // TODO add query param "course". if we have that param, then give list of registered courses. else, give student info.
-    // view student information
+    /**
+     * Method for getting a student's information. The response is an array of objects. The first (index 0) object includes
+     *   the first name, last name, and email of the requesting student. The other elements in the array are courses, which
+     *   have number, name, description, professor, and students[] fields.
+     * @param req
+     * @param resp - will contain an array with the authorized student's information
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
-
-
 
         try {
             Principal principal = (Principal) req.getAttribute("principal");
@@ -54,8 +59,6 @@ public class StudentServlet extends HttpServlet {
                 respWriter.write(objectMapper.writeValueAsString(errResp));
                 return;
             } else {
-                System.out.println(principal);
-                // TODO overload getRegisteredCourses so that it takes in a student email, or maybe id
                 Student student = userServices.findStudentById(principal.getId());
                 StudentDTO studentDTO = new StudentDTO(student);
                 List<Object> queryResult = new ArrayList<>();
@@ -84,7 +87,13 @@ public class StudentServlet extends HttpServlet {
         }
     }
 
-    //For student registration
+    /**
+     * Method for registering a new student.
+     * @param req - JSON with firstName, lastName, email, and password fields
+     * @param resp - will contain the newly registered user's ID, email, and role (student).
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

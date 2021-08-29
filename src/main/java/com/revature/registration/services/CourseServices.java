@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class CourseServices {
 
-    // TODO implement slf4j (logback?)
     private final Logger logger = LogManager.getLogger(CourseServices.class);
     private CourseRepository courseRepo;
 
@@ -94,7 +93,6 @@ public class CourseServices {
         }
     }
 
-    //#TODO look over this overloaded method / added by Charles
     /**
      * registerForCourse() uses CourseRepository to add a student to a Course's array of Students.
      * @param number
@@ -110,7 +108,6 @@ public class CourseServices {
         }
     }
 
-    //#TODO look over this overloaded method / added by Charles
     /**
      * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
      * @param number

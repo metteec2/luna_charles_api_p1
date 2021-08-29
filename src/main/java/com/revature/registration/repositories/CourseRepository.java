@@ -272,7 +272,7 @@ public class CourseRepository{
      * @param email
      * @return
      */
-    public boolean removeStudent(String courseNumber, String email) { //TODO method never returns false... fix this?
+    public boolean removeStudent(String courseNumber, String email) {
         try {
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase courseDb = mongoClient.getDatabase("p0");

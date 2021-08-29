@@ -61,7 +61,6 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     public Faculty findById(String id) {
 
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase facultyDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
@@ -97,7 +96,6 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     public Faculty findByCredentials(String email, String password) {
 
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase facultyDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
@@ -111,7 +109,6 @@ public class FacultyRepository implements CrudRepository<Faculty>{
             ObjectMapper mapper = new ObjectMapper();
             Faculty faculty = mapper.readValue(authDoc.toJson(), Faculty.class);
             faculty.setId(authDoc.get("_id").toString());
-            System.out.println(faculty);
             return faculty;
         } catch (JsonMappingException jme) {
             logger.debug(jme.getMessage());
