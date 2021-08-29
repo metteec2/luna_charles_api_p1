@@ -116,7 +116,7 @@ This method does **not** require an authorization token.
 
 #### GET
 
-the GET method on /faculty responds with the principal of the authorized user.
+the GET method on /faculty responds with the ID, email, and role (faculty) of the authorized user.
 
 ### /registration
 
