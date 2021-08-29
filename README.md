@@ -76,18 +76,18 @@ Unless otherwise stated, each method requires an authorization token provided in
 
 ### /authstudent
 
-#### GET
+#### POST
 
-the GET request on /authstudent authenticates a student. in the request body, provide JSON with email: and password: fields.
+the POST request on /authstudent authenticates a student. in the request body, provide JSON with email: and password: fields.
 The response body has JSON with an ID, email, and role (student) on successful login.
 
 This method does **not** require an authorization token.
 
 ### /authfaculty
 
-#### GET
+#### POST
 
-the GET request on /authfaculty authenticates a faculty. in the request body, provide JSON with email: and password: fields.
+the POST request on /authfaculty authenticates a faculty. in the request body, provide JSON with email: and password: fields.
 The response body has JSON with an ID, email, and role (faculty) on successful login.
 
 This method does **not** require an authorization token.
