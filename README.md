@@ -146,7 +146,7 @@ the POST method on /course adds a new course to the database. the request body (
 - capacity: 
 - students: []
 
-note the students is an empty string.
+note the students field is an empty string.
 
 #### PUT
 
