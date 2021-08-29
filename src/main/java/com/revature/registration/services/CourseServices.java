@@ -110,15 +110,6 @@ public class CourseServices {
         }
     }
 
-    /**
-     * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
-     * @param number
-     * @param student
-     */
-    public boolean removeFromCourse(String number, Student student) {
-        return courseRepo.removeStudent(number,student.getEmail());
-    }
-
     //#TODO look over this overloaded method / added by Charles
     /**
      * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
@@ -138,6 +129,23 @@ public class CourseServices {
      * @return
      */
     public boolean updateCourse(String currentNumber,String field, String newValue) {
+        Course course = new Course();
+        course.setCapacity(10);
+        course.setDescription("description");
+        course.setNumber("course number");
+        course.setName("course name");
+
+        try {
+            if (field.equals("capacity")) course.setCapacity(Integer.parseInt(newValue));
+        } catch (NumberFormatException nfe){
+            throw new InvalidInformationException("Capacity provided was not a number");
+        }
+        if(field.equals("number")) course.setNumber(newValue);
+        if(field.equals("name")) course.setName(newValue);
+        if(field.equals("description")) course.setDescription(newValue);
+
+        isCourseValid(course);
+
         return courseRepo.update(currentNumber,field,newValue);
     }
 
@@ -169,12 +177,11 @@ public class CourseServices {
             throw new InvalidInformationException("Course number/name cannot be null or empty");
         }
         if (course.getNumber().length() < 6){
-            throw new InvalidInformationException("Course number length must be at least 7!");
+            throw new InvalidInformationException("Course number length must be at least 6 characters");
         }
         if (course.getName().length() < 6){
-            throw new InvalidInformationException("Course number length must be at least 7!");
+            throw new InvalidInformationException("Course name length must be at least 6 characters");
         }
-
 
         return true;
     }
