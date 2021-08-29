@@ -110,15 +110,6 @@ public class CourseServices {
         }
     }
 
-    /**
-     * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
-     * @param number
-     * @param student
-     */
-    public boolean removeFromCourse(String number, Student student) {
-        return courseRepo.removeStudent(number,student.getEmail());
-    }
-
     //#TODO look over this overloaded method / added by Charles
     /**
      * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
@@ -174,7 +165,6 @@ public class CourseServices {
         if (course.getName().length() < 6){
             throw new InvalidInformationException("Course number length must be at least 7!");
         }
-
 
         return true;
     }
