@@ -124,7 +124,7 @@ public class CourseServlet extends HttpServlet {
 
         try {
             Principal principal = (Principal) req.getAttribute("principal");
-            if(principal == null) {
+            if (principal == null) {
                 String msg = ("No session found, please login.");
                 resp.setStatus(401);
                 ErrorResponse errResp = new ErrorResponse(401, msg);
@@ -134,7 +134,7 @@ public class CourseServlet extends HttpServlet {
 
             CourseEditDTO courseEdit = objectMapper.readValue(req.getInputStream(), CourseEditDTO.class);
             boolean accepted = courseServices.updateCourse(courseEdit.getCurrentNumber(), courseEdit.getField(), courseEdit.getNewValue());
-            if(accepted) {
+            if (accepted) {
                 String payload = objectMapper.writeValueAsString(accepted);
                 respWriter.write(payload);
                 resp.setStatus(200); //accepted
@@ -144,9 +144,10 @@ public class CourseServlet extends HttpServlet {
                 respWriter.write(objectMapper.writeValueAsString(errorResponse));
                 return;
             }
-        } catch (DataSourceException dse) {
+        } catch (InvalidInformationException | DataSourceException ee){
+            ee.printStackTrace();
             resp.setStatus(400);
-            ErrorResponse errorResponse = new ErrorResponse(400,dse.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(400,ee.getMessage());
             respWriter.write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             e.printStackTrace();

@@ -177,10 +177,10 @@ public class CourseServices {
             throw new InvalidInformationException("Course number/name cannot be null or empty");
         }
         if (course.getNumber().length() < 6){
-            throw new InvalidInformationException("Course number length must be at least 7!");
+            throw new InvalidInformationException("Course number length must be at least 6 characters");
         }
         if (course.getName().length() < 6){
-            throw new InvalidInformationException("Course number length must be at least 7!");
+            throw new InvalidInformationException("Course name length must be at least 6 characters");
         }
 
         return true;
