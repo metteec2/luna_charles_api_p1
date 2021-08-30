@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,20 +34,24 @@ public class CourseRepository{
      * @return
      */
     public Course save(Course newCourse) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase courseDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> courseCollection = courseDb.getCollection("course");
-        Document newCourseDoc = new Document("number",newCourse.getNumber())
-                .append("name",newCourse.getName())
-                .append("description",newCourse.getDescription())
-                .append("professor",newCourse.getProfessor())
-                .append("capacity",newCourse.getCapacity())
-                .append("students",newCourse.getStudents());
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase courseDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> courseCollection = courseDb.getCollection("course");
+            Document newCourseDoc = new Document("number", newCourse.getNumber())
+                    .append("name", newCourse.getName())
+                    .append("description", newCourse.getDescription())
+                    .append("professor", newCourse.getProfessor())
+                    .append("capacity", newCourse.getCapacity())
+                    .append("students", Arrays.asList(newCourse.getStudents()));
 
-        courseCollection.insertOne(newCourseDoc);
-        newCourse.setId(newCourseDoc.get("_id").toString());
-
-        return newCourse;
+            courseCollection.insertOne(newCourseDoc);
+            newCourse.setId(newCourseDoc.get("_id").toString());
+            return newCourse;
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to persist course to database",e);
+        }
     }
 
     /**
@@ -77,7 +82,7 @@ public class CourseRepository{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find course by id",e);
         }
     }
 
@@ -109,7 +114,7 @@ public class CourseRepository{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find course by number",e);
         }
     }
 
@@ -138,7 +143,7 @@ public class CourseRepository{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find courses that student is registered for",e);
         }
     }
 
@@ -170,7 +175,7 @@ public class CourseRepository{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find courses taught by faculty member",e);
         }
     }
 
@@ -197,7 +202,7 @@ public class CourseRepository{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find all courses in the database",e);
         }
     }
 
@@ -210,22 +215,33 @@ public class CourseRepository{
      * @return
      */
     public boolean update(String currentNumber, String field, String newValue) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase courseDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> courseCollection = courseDb.getCollection("course");
-        Document updateCourseDoc = new Document(field,newValue);
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase courseDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> courseCollection = courseDb.getCollection("course");
 
-        if (field.equals("number") && courseCollection.find(Filters.eq("number",newValue)) != null) {
-            return false;
+//            if (field.equals("number") && courseCollection.find(Filters.eq("number", newValue)) != null) {
+//                return false;
+//            }
+//
+//            if (courseCollection.find(Filters.eq("number", currentNumber)) == null) {
+//                return false;
+//            }
+
+            if (field.equals("capacity")) {
+                int nv = Integer.parseInt(newValue);
+                courseCollection.updateOne(Filters.eq("number", currentNumber), Updates.set(field, nv));
+            } else {
+                courseCollection.updateOne(Filters.eq("number", currentNumber), Updates.set(field, newValue));
+            }
+            return true;
+
+        } catch (NumberFormatException nfe) {
+            throw new DataSourceException("The capacity provided was not a number",nfe);
+        } catch (Exception e){
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to update a course",e);
         }
-
-        if (courseCollection.find(Filters.eq("number",currentNumber)) == null) {
-            return false;
-        }
-
-        courseCollection.updateOne(Filters.eq("number",currentNumber),
-                Updates.set(field,newValue));
-        return true;
     }
 
     /**
@@ -234,14 +250,19 @@ public class CourseRepository{
      * @param email
      * @return
      */
-    public boolean addStudent(String courseNumber, String email) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase courseDb = mongoClient.getDatabase("p0");
-        MongoCollection courseCollection = courseDb.getCollection("course");
+    public boolean addStudent(String courseNumber, String email) { //
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase courseDb = mongoClient.getDatabase("p0");
+            MongoCollection courseCollection = courseDb.getCollection("course");
 
-        courseCollection.updateOne(Filters.eq("number",courseNumber),
-                Updates.addToSet("students",email));
-        return true;
+            courseCollection.updateOne(Filters.eq("number", courseNumber),
+                    Updates.addToSet("students", email));
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to register student to course",e);
+        }
     }
 
     /**
@@ -252,12 +273,17 @@ public class CourseRepository{
      * @return
      */
     public boolean removeStudent(String courseNumber, String email) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase courseDb = mongoClient.getDatabase("p0");
-        MongoCollection courseCollection = courseDb.getCollection("course");
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase courseDb = mongoClient.getDatabase("p0");
+            MongoCollection courseCollection = courseDb.getCollection("course");
 
-        courseCollection.updateOne(Filters.eq("number",courseNumber),Updates.pull("students",email));
-        return true;
+            courseCollection.updateOne(Filters.eq("number", courseNumber), Updates.pull("students", email));
+            return true;
+        } catch (Exception e){
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to unregister student from course",e);
+        }
     }
 
     /**
@@ -266,14 +292,19 @@ public class CourseRepository{
      * @return
      */
     public boolean deleteByNumber(String number) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase courseDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> courseCollection = courseDb.getCollection("course");
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase courseDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> courseCollection = courseDb.getCollection("course");
 
-        if (courseCollection.find(Filters.eq("number",number)) == null) {
-            return false;
+            if (courseCollection.find(Filters.eq("number", number)) == null) {
+                return false;
+            }
+            courseCollection.deleteOne(Filters.eq("number", number));
+            return true;
+        } catch (Exception e){
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to delete a course by number",e);
         }
-        courseCollection.deleteOne(Filters.eq("number",number));
-        return true;
     }
 }

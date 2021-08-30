@@ -13,6 +13,7 @@ import com.revature.registration.util.exceptions.DataSourceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  * The StudentRepository Class connects with the collection in the database where Students are stored. Its methods are
@@ -30,18 +31,23 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     @Override
     public Student save(Student newStudent) {
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase studentDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> studentCollection = studentDb.getCollection("student");
-        Document newStudentDoc = new Document("firstName", newStudent.getFirstName())
-                .append("lastName",newStudent.getLastName())
-                .append("email",newStudent.getEmail())
-                .append("password",newStudent.getPassword());
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase studentDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> studentCollection = studentDb.getCollection("student");
+            Document newStudentDoc = new Document("firstName", newStudent.getFirstName())
+                    .append("lastName", newStudent.getLastName())
+                    .append("email", newStudent.getEmail())
+                    .append("password", newStudent.getPassword());
 
-        studentCollection.insertOne(newStudentDoc);
-        newStudent.setId(newStudentDoc.get("_id").toString());
+            studentCollection.insertOne(newStudentDoc);
+            newStudent.setId(newStudentDoc.get("_id").toString());
 
-        return newStudent;
+            return newStudent;
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An error occurred while saving student to the database",e);
+        }
     }
 
     /**
@@ -53,12 +59,15 @@ public class StudentRepository implements CrudRepository<Student>{
     @Override
     public Student findById(String id) {
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
-            Document queryDoc = new Document("_id", id);
+            Document queryDoc = new Document("_id", new ObjectId(id));
             Document returnDoc = studentCollection.find(queryDoc).first();
+
+            if (returnDoc == null) {
+                return null;
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             Student student = mapper.readValue(returnDoc.toJson(), Student.class);
@@ -69,8 +78,9 @@ public class StudentRepository implements CrudRepository<Student>{
             logger.debug(jme.getMessage());
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find student by id",e);
         }
     }
 
@@ -82,7 +92,6 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     public Student findByEmail(String email) {
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
@@ -103,7 +112,7 @@ public class StudentRepository implements CrudRepository<Student>{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find student by email.",e);
         }
     }
 
@@ -117,7 +126,6 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     public Student findByCredentials(String email,String password) {
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase studentDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> studentCollection = studentDb.getCollection("student");
@@ -138,7 +146,7 @@ public class StudentRepository implements CrudRepository<Student>{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find student by credentials",e);
         }
     }
 
@@ -153,19 +161,23 @@ public class StudentRepository implements CrudRepository<Student>{
     @Override
     public boolean update(Student updateStudent,String field,String newValue) {
 
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase studentDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> studentCollection = studentDb.getCollection("student");
-        Document queryDoc = new Document(field,newValue);
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase studentDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> studentCollection = studentDb.getCollection("student");
+            Document queryDoc = new Document(field, newValue);
 
-        // TODO create if statements with other potential problems
-        if (field.equals("email") && studentCollection.find(queryDoc) != null) {
-            return false;
+            if (field.equals("email") && studentCollection.find(queryDoc) != null) {
+                return false;
+            }
+
+            studentCollection.updateOne(Filters.eq("email",updateStudent.getEmail()), Updates.set(field,newValue));
+
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to update student info",e);
         }
-
-        studentCollection.updateOne(Filters.eq("email",updateStudent.getEmail()), Updates.set(field,newValue));
-
-        return true;
     }
 
     /**
@@ -176,17 +188,21 @@ public class StudentRepository implements CrudRepository<Student>{
      */
     @Override
     public boolean deleteById(String id) {
-        // TODO remove student from courses
 
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase studentDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> studentCollection =  studentDb.getCollection("student");
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase studentDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> studentCollection = studentDb.getCollection("student");
 
-        if (studentCollection.find(Filters.eq("_id",id)) == null) {
-            return false;
+            if (studentCollection.find(Filters.eq("_id", id)) == null) {
+                return false;
+            }
+
+            studentCollection.deleteOne(Filters.eq("_id", id));
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to delete the student",e);
         }
-
-        studentCollection.deleteOne(Filters.eq("_id",id));
-        return true;
     }
 }

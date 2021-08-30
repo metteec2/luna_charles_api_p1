@@ -118,9 +118,49 @@ public class CourseServicesTestSuite {
     }
 
     @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseNumber() {
+        // Arrange
+        Course inputCourse = new Course("     ","Discrete Mathematics",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenShortCourseNumber() {
+        // Arrange
+        Course inputCourse = new Course("short","Discrete Mathematics",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
     public void isCourseValid_throwsInvalidInformationException_whenGivenEmptyCourseName() {
         // Arrange
         Course inputCourse = new Course("math 102","",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenWhiteSpaceCourseName() {
+        // Arrange
+        Course inputCourse = new Course("math 102","    ",
+                "description","prof",12);
+
+        // Act & Assert
+        sut.isCourseValid(inputCourse);
+    }
+
+    @Test(expected = InvalidInformationException.class)
+    public void isCourseValid_throwsInvalidInformationException_whenGivenShortCourseName() {
+        // Arrange
+        Course inputCourse = new Course("math 102","short",
                 "description","prof",12);
 
         // Act & Assert
@@ -161,6 +201,20 @@ public class CourseServicesTestSuite {
     }
 
     @Test
+    public void getRegisteredCourses_catchesException_whenExceptionOccurs() {
+        // Arrange
+        Student student = new Student();
+        DataSourceException dse = new DataSourceException("", new Exception());
+        when(mockCourseRepo.findByStudent(any())).thenThrow(dse);
+
+        // Act
+        sut.getRegisteredCourses(student);
+
+        // Assert
+        verify(mockCourseRepo,times(1)).findByStudent(student);
+    }
+
+    @Test
     public void getTaughtCourses_returnsNull_ifNoCourseFoundForFaculty() {
         // Arrange
         Faculty faculty = new Faculty();
@@ -173,6 +227,80 @@ public class CourseServicesTestSuite {
         verify(mockCourseRepo,times(1)).findByFaculty(faculty);
         Assert.assertEquals(result,null);
     }
+
+    @Test (expected = DataSourceException.class)
+    public void getTaughtCourses_throwsException_whenExceptionOccurs() {
+        // Arrange
+        Faculty faculty = new Faculty();
+        DataSourceException dse = new DataSourceException("", new Exception());
+        when(mockCourseRepo.findByFaculty(any())).thenThrow(dse);
+
+        // Act
+        sut.getTaughtCourses(faculty);
+
+        // Assert
+        verify(mockCourseRepo,times(1)).findByFaculty(faculty);
+    }
+
+    @Test
+    public void getCourseList_returnsNull_ifNoCourseFound() {
+        // Arrange
+        when(mockCourseRepo.findAll()).thenReturn(null);
+
+        // Act
+        List<Course> result = sut.getCourseList();
+
+        // Assert
+        verify(mockCourseRepo,times(1)).findAll();
+        Assert.assertEquals(result,null);
+    }
+
+    @Test (expected = DataSourceException.class)
+    public void getCourseList_throwsException_whenExceptionOccurs() {
+        // Arrange
+        DataSourceException dse = new DataSourceException("", new Exception());
+        when(mockCourseRepo.findAll()).thenThrow(dse);
+
+        // Act
+        sut.getCourseList();
+
+        // Assert
+        verify(mockCourseRepo,times(1)).findAll();
+    }
+
+    @Test
+    public void registerForCourse_returnsSuccessfully_givenValidInput() {
+        // Arrange
+        String number = "math 100";
+        String email = "student@school.com";
+
+        when(mockCourseRepo.addStudent(number, email)).thenReturn(true);
+
+        // Act
+        boolean result = sut.registerForCourse(number, email);
+
+        // Assert
+        verify(mockCourseRepo,times(1)).addStudent(number, email);
+        Assert.assertTrue(result);
+    }
+
+    @Test (expected = Exception.class)
+    public void registerForCourse_throwsException_whenExceptionOccurs() {
+        // Arrange
+        String number = "math 100";
+        String email = "student@school.com";
+        DataSourceException dse = new DataSourceException("An unexpected exception occurred while trying to register student to course", new Exception());
+
+        when(mockCourseRepo.addStudent(number, email)).thenThrow(dse);
+
+        // Act
+        sut.registerForCourse(number, email);
+
+        // Assert
+        verify(mockCourseRepo,times(1)).addStudent(number, email);
+    }
+
+
 
     @Test(expected = DataSourceException.class)
     public void registerForCourse_throwsDataSourceException_whenStudentAlreadyInClass() {
@@ -204,7 +332,46 @@ public class CourseServicesTestSuite {
         boolean result = sut.removeCourse(number);
 
         // Assert
-        Assert.assertTrue(!result);
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void removeCourse_returnsTrue_ifCourseIsInDatabase(){
+        // Arrange
+        Course course = new Course();
+        course.setId("fakeId");
+        course.setNumber("test 101");
+        course.setName("Testing");
+        course.setDescription("valid description");
+        course.setCapacity(10);
+        course.setStudents(new String[]{"a", "b", "c"});
+
+        sut.createCourse(course);
+
+        when(mockCourseRepo.deleteByNumber(course.getNumber())).thenReturn(true);
+
+        // Act
+        boolean result = sut.removeCourse(course.getNumber());
+
+        // Assert
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void removeFromCourse_returnsTrue_whenGivenValidInput() {
+        // Arrange
+        String number = "math 100";
+        String field = "capacity";
+        String newValue = "15";
+
+        when(mockCourseRepo.update(number, field, newValue)).thenReturn(true);
+
+        // Act
+        boolean result = sut.updateCourse(number, field, newValue);
+
+        // Assert
+        verify(mockCourseRepo,times(1)).update(number, field, newValue);
+        Assert.assertTrue(result);
     }
 
 }

@@ -13,6 +13,7 @@ import com.revature.registration.util.exceptions.DataSourceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  * The FacultyRepository Class connects with the collection in the database where Faculty are stored. Its methods
@@ -31,18 +32,23 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     @Override
     public Faculty save(Faculty newFaculty) {
 
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase facultyDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
-        Document newFacultyDoc = new Document("firstName", newFaculty.getFirstName())
-                .append("lastName",newFaculty.getLastName())
-                .append("email",newFaculty.getEmail())
-                .append("password",newFaculty.getPassword());
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase facultyDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
+            Document newFacultyDoc = new Document("firstName", newFaculty.getFirstName())
+                    .append("lastName", newFaculty.getLastName())
+                    .append("email", newFaculty.getEmail())
+                    .append("password", newFaculty.getPassword());
 
-        facultyCollection.insertOne(newFacultyDoc);
-        newFaculty.setId(newFacultyDoc.get("_id").toString());
+            facultyCollection.insertOne(newFacultyDoc);
+            newFaculty.setId(newFacultyDoc.get("_id").toString());
 
-        return newFaculty;
+            return newFaculty;
+        } catch (Exception e){
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to persist faculty member to database",e);
+        }
     }
 
     /**
@@ -55,11 +61,10 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     public Faculty findById(String id) {
 
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase facultyDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
-            Document queryDoc = new Document("_id", id);
+            Document queryDoc = new Document("_id", new ObjectId(id));
             Document returnDoc = facultyCollection.find(queryDoc).first();
 
             if (returnDoc == null) {
@@ -76,7 +81,7 @@ public class FacultyRepository implements CrudRepository<Faculty>{
             throw new DataSourceException("An exception occurred while mapping the Document",jme);
         } catch (Exception e) {
             logger.debug(e.getMessage());
-            throw new DataSourceException("An unexpected exception occurred",e);
+            throw new DataSourceException("An unexpected exception occurred while trying to find faculty by id",e);
         }
     }
 
@@ -91,7 +96,6 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     public Faculty findByCredentials(String email, String password) {
 
         try {
-            // TODO obfuscate dbName and collectionName with properties
             MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
             MongoDatabase facultyDb = mongoClient.getDatabase("p0");
             MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
@@ -105,7 +109,6 @@ public class FacultyRepository implements CrudRepository<Faculty>{
             ObjectMapper mapper = new ObjectMapper();
             Faculty faculty = mapper.readValue(authDoc.toJson(), Faculty.class);
             faculty.setId(authDoc.get("_id").toString());
-            System.out.println(faculty);
             return faculty;
         } catch (JsonMappingException jme) {
             logger.debug(jme.getMessage());
@@ -127,18 +130,23 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     @Override
     public boolean update(Faculty updateFaculty,String field,String newValue) {
 
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase facultyDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
-        Document queryDoc = new Document(field,newValue);
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase facultyDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
+            Document queryDoc = new Document(field, newValue);
 
-        if (field.equals("email") && facultyCollection.find(queryDoc) != null) {
-            return false;
+            if (field.equals("email") && facultyCollection.find(queryDoc) != null) {
+                return false;
+            }
+
+            facultyCollection.updateOne(Filters.eq("email", updateFaculty.getEmail()), Updates.set(field, newValue));
+
+            return true;
+        } catch (Exception e){
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to update faculty member information",e);
         }
-
-        facultyCollection.updateOne(Filters.eq("email",updateFaculty.getEmail()), Updates.set(field,newValue));
-
-        return true;
     }
 
     /**
@@ -150,15 +158,20 @@ public class FacultyRepository implements CrudRepository<Faculty>{
     @Override
     public boolean deleteById(String id) {
 
-        MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
-        MongoDatabase facultyDb = mongoClient.getDatabase("p0");
-        MongoCollection<Document> facultyCollection =  facultyDb.getCollection("faculty");
+        try {
+            MongoClient mongoClient = ConnectionFactory.getInstance().getConnection();
+            MongoDatabase facultyDb = mongoClient.getDatabase("p0");
+            MongoCollection<Document> facultyCollection = facultyDb.getCollection("faculty");
 
-        if (facultyCollection.find(Filters.eq("_id",id)) == null) {
-            return false;
+            if (facultyCollection.find(Filters.eq("_id", id)) == null) {
+                return false;
+            }
+
+            facultyCollection.deleteOne(Filters.eq("_id", id));
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw new DataSourceException("An unexpected exception occurred while trying to delete faculty member",e);
         }
-
-        facultyCollection.deleteOne(Filters.eq("_id",id));
-        return true;
     }
 }

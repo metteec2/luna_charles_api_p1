@@ -86,6 +86,19 @@ public class UserServicesTestSuite {
     }
 
     @Test(expected = InvalidInformationException.class)
+    public void isStudentValid_throwsInformationInvalidException_whenGivenWhiteSpaceParameters()  {
+        // Arrange
+        Student invalidStudent = new Student();
+        invalidStudent.setFirstName("    ");
+        invalidStudent.setLastName("    ");
+        invalidStudent.setEmail("@");
+        invalidStudent.setPassword("    ");
+
+        // Act & Assert
+        sut.isStudentValid(invalidStudent);
+    }
+
+    @Test(expected = InvalidInformationException.class)
     public void isStudentValid_throwsInformationInvalidException_whenGivenNullParameters()  {
         // Arrange
         Student invalidStudent = new Student();
@@ -209,4 +222,74 @@ public class UserServicesTestSuite {
             verify(mockFacultyRepo, times(1)).findByCredentials(givenEmail, givenPassword);
         }
     }
+
+    @Test
+    public void findStudentById_returnsSuccessfully_whenStudentExists(){
+        //Arrange
+        String id = "fakeId";
+        Student student = new Student();
+        student.setFirstName("John");
+        student.setLastName("Smith");
+        student.setEmail("email@email.com");
+        student.setPassword("password");
+        student.setId("fakeId");
+
+        when(mockStudentRepo.findById(id)).thenReturn(student);
+
+        //Act
+        Student foundStudent = sut.findStudentById(id);
+
+        //Assert
+        verify(mockStudentRepo,times(1)).findById(id);
+        Assert.assertEquals(foundStudent.getId(),student.getId());
+
+    }
+
+    @Test (expected = InvalidInformationException.class)
+    public void findStudentById_throwsException_whenFoundStudentIsNull(){
+        //Arrange
+        when(mockStudentRepo.findById(any())).thenReturn(null);
+
+        //Act
+        Student foundStudent = sut.findStudentById("id");
+
+        //Assert
+        Assert.assertNull(foundStudent);
+    }
+
+    @Test
+    public void findFacultyById_returnsSuccessfully_whenFacultyExists(){
+        //Arrange
+        String id = "fakeId";
+        Faculty faculty = new Faculty();
+        faculty.setFirstName("John");
+        faculty.setLastName("Smith");
+        faculty.setEmail("email@email.com");
+        faculty.setPassword("password");
+        faculty.setId("fakeId");
+
+        when(mockFacultyRepo.findById(id)).thenReturn(faculty);
+
+        //Act
+        Faculty foundFaculty = sut.findFacultyById(id);
+
+        //Assert
+        verify(mockFacultyRepo,times(1)).findById(id);
+        Assert.assertEquals(faculty.getId(),foundFaculty.getId());
+
+    }
+
+    @Test (expected = InvalidInformationException.class)
+    public void findFacultyById_throwsException_whenFoundFacultyIsNull(){
+        //Arrange
+        when(mockFacultyRepo.findById(any())).thenReturn(null);
+
+        //Act
+        Faculty foundFaculty = sut.findFacultyById("id");
+
+        //Assert
+        Assert.assertNull(foundFaculty);
+    }
+
+
 }

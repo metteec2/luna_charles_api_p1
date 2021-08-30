@@ -16,7 +16,6 @@ import java.util.List;
  */
 public class CourseServices {
 
-    // TODO implement slf4j (logback?)
     private final Logger logger = LogManager.getLogger(CourseServices.class);
     private CourseRepository courseRepo;
 
@@ -32,6 +31,7 @@ public class CourseServices {
      */
     public Course createCourse(Course newCourse) {
         isCourseValid(newCourse);
+        newCourse.setStudents(new String[0]);
         return courseRepo.save(newCourse);
     }
 
@@ -44,8 +44,8 @@ public class CourseServices {
             return courseRepo.findAll();
         } catch (DataSourceException dse) {
             logger.error(dse.getMessage());
+            throw new DataSourceException(dse.getMessage(),dse);
         }
-        return null;
     }
 
     /**
@@ -74,8 +74,8 @@ public class CourseServices {
             return courseRepo.findByFaculty(faculty);
         } catch (DataSourceException dse) {
             logger.error(dse.getMessage());
+            throw new DataSourceException(dse.getMessage(),dse);
         }
-        return null;
     }
 
     /**
@@ -83,9 +83,24 @@ public class CourseServices {
      * @param number
      * @param student
      */
-    public void registerForCourse(String number, Student student) {
+    public boolean registerForCourse(String number, Student student) {
         try {
-            courseRepo.addStudent(number, student.getEmail());
+            return courseRepo.addStudent(number, student.getEmail());
+        } catch (Exception e) {
+            logger.error("A problem occurred while trying to add student to course list, " +
+                    "check that you aren't already registered");
+            throw new DataSourceException(e.getMessage(),e);
+        }
+    }
+
+    /**
+     * registerForCourse() uses CourseRepository to add a student to a Course's array of Students.
+     * @param number
+     * @param email
+     */
+    public boolean registerForCourse(String number, String email) {
+        try {
+            return courseRepo.addStudent(number, email);
         } catch (Exception e) {
             logger.error("A problem occurred while trying to add student to course list, " +
                     "check that you aren't already registered");
@@ -96,10 +111,10 @@ public class CourseServices {
     /**
      * removeFromCourse() uses CourseRepository to remove a Student from a Course's array of Students.
      * @param number
-     * @param student
+     * @param email
      */
-    public  void removeFromCourse(String number, Student student) {
-        courseRepo.removeStudent(number,student.getEmail());
+    public boolean removeFromCourse(String number, String email) {
+        return courseRepo.removeStudent(number,email);
     }
 
     /**
@@ -111,6 +126,23 @@ public class CourseServices {
      * @return
      */
     public boolean updateCourse(String currentNumber,String field, String newValue) {
+        Course course = new Course();
+        course.setCapacity(10);
+        course.setDescription("description");
+        course.setNumber("course number");
+        course.setName("course name");
+
+        try {
+            if (field.equals("capacity")) course.setCapacity(Integer.parseInt(newValue));
+        } catch (NumberFormatException nfe){
+            throw new InvalidInformationException("Capacity provided was not a number");
+        }
+        if(field.equals("number")) course.setNumber(newValue);
+        if(field.equals("name")) course.setName(newValue);
+        if(field.equals("description")) course.setDescription(newValue);
+
+        isCourseValid(course);
+
         return courseRepo.update(currentNumber,field,newValue);
     }
 
@@ -138,10 +170,16 @@ public class CourseServices {
             throw new InvalidInformationException("Course description cannot be more than 279 characters");
         }
         if (course.getNumber() == null || course.getName() == null ||
-                course.getNumber().equals("") || course.getName().equals("")) {
-
+                course.getNumber().trim().equals("") || course.getName().trim().equals("")) {
             throw new InvalidInformationException("Course number/name cannot be null or empty");
         }
+        if (course.getNumber().length() < 6){
+            throw new InvalidInformationException("Course number length must be at least 6 characters");
+        }
+        if (course.getName().length() < 6){
+            throw new InvalidInformationException("Course name length must be at least 6 characters");
+        }
+
         return true;
     }
 

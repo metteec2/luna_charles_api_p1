@@ -6,12 +6,12 @@ import com.revature.registration.util.exceptions.AuthenticationException;
 import com.revature.registration.web.dtos.Credentials;
 import com.revature.registration.web.dtos.ErrorResponse;
 import com.revature.registration.web.dtos.Principal;
+import com.revature.registration.web.security.TokenGenerator;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -19,13 +19,21 @@ public class AuthStudentServlet extends HttpServlet {
 
     private final UserServices userServices;
     private final ObjectMapper objectMapper;
+    private final TokenGenerator tokenGenerator;
 
-    public AuthStudentServlet(UserServices userServices,ObjectMapper objectMapper) {
+    public AuthStudentServlet(UserServices userServices,ObjectMapper objectMapper,TokenGenerator tokenGenerator) {
         this.userServices = userServices;
         this.objectMapper = objectMapper;
+        this.tokenGenerator = tokenGenerator;
     }
 
-    // the endpoint that this servlet is mapped to will be hit by a Post request, triggering this method
+    /**
+     * Method for token-based authentication of a student. Overrides HttpServlet class's doPost method.
+     * @param req - contains JSON with email and password fields
+     * @param resp - contains JSON with an ID, email, and role (student) on successful login
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -42,10 +50,8 @@ public class AuthStudentServlet extends HttpServlet {
             String payload = objectMapper.writeValueAsString(principal);
             respWriter.write(payload);
 
-            // the user's session will stay with them over time, meaning we can reference it when needed.
-            // in this case, we add an "auth-user" attribute so that we can ensure a user is meant to be on a webpage later on
-            HttpSession session = req.getSession();
-            session.setAttribute("auth-user",principal);
+            String token = tokenGenerator.createToken(principal);
+            resp.setHeader(tokenGenerator.getJwtConfig().getHeader(), token);
 
         // loginStudent throws and Authentication Exception if its unable to log a user in. This sets the status code
         // to 401 sends that back, along with the exception's message

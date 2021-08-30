@@ -20,6 +20,20 @@ public class UserServices {
         this.facultyRepo = facultyRepo;
     }
 
+    public Student findStudentById(String id) {
+        Student foundStudent = studentRepo.findById(id);
+        if (foundStudent == null) {
+            throw new InvalidInformationException("you don't appear to be logged in as a student");
+        }
+        return foundStudent;
+    }
+
+    public Faculty findFacultyById(String id) {
+        Faculty foundFaculty = facultyRepo.findById(id);
+        if (foundFaculty == null) { throw new InvalidInformationException("you don't appear to be logged in as a faculty"); }
+        return foundFaculty;
+    }
+
     /**
      * registerStudent() calls isStudentValid before saving a Student to the database. If a Student is not valid,
      * isStudentValid will throw an exception.
@@ -86,9 +100,8 @@ public class UserServices {
         if (student.getPassword().length()<4) {
             throw new InvalidInformationException("Password provided was not long enough");
         }
-        if (student.getFirstName().equals("") || student.getLastName().equals("") || student.getEmail().equals("") ||
-                student.getPassword().equals("")) {
-
+        if (student.getFirstName().trim().equals("") || student.getLastName().trim().equals("") || student.getEmail().trim().equals("") ||
+                student.getPassword().trim().equals("")) {
             throw new InvalidInformationException("No field can be left blank");
         }
         if (studentRepo.findByEmail(student.getEmail()) != null) {
