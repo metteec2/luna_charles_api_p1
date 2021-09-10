@@ -4,6 +4,8 @@
 
 As part of a web-based course registration app, this api allows for students and faculty to perform basic CRUD (Create, Read, Update, Delete) operations on courses that are available for registration.
 
+See the UI for this application: https://github.com/LunaHaines/luna_charles_ui_p1
+
 ## Technologies Used
 * Java
 * MongoDB
