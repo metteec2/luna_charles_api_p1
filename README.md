@@ -180,3 +180,8 @@ the PUT method on /course edits an existing course. The request body (JSON) shou
 #### DELETE
 
 the DELETE method on /course deletes an existing course. The request body (JSON) should contain the number (i.e. "math 100") of the course to be deleted.
+
+## Contributors
+
+* Luna Haines
+* Charles Mettee
