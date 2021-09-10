@@ -1,17 +1,37 @@
 # Course Registration Management API
 
+## Project Description
+
 As part of a web-based course registration app, this api allows for students and faculty to perform basic CRUD (Create, Read, Update, Delete) operations on courses that are available for registration.
 
-## Setup: 
+## Technologies Used
+* Java
+* MongoDB
+* Maven
+* JUnit
+* Mockito
+* Postman
+* Log4J
+
+## Features
+* Faculty can perform CRUD operations on courses they teach
+* Students can view the full course list
+* Students can register and unregister for courses
+* Students can register a new account
+* Students and faculty can log in
+
+## Getting Started
+
+git clone https://github.com/metteec2/luna_charles_api_p1.git
 
 This api connects to a MongoDB database with a series of collections inside of it.
 
-### MongoDB:
+### MongoDB
 
 Once your database is created, there are 3 collections it needs inside of it: student, faculty, and course.
 There are .json files with sample data for each collection in src/main/resources/
 
-#### student:
+#### student
 
 student documents in MongoDB should look like this:
 > {
@@ -21,7 +41,7 @@ student documents in MongoDB should look like this:
 >   "password": "iAmIronman",
 > }
 
-#### faculty:
+#### faculty
 
 faculty documents in MongoDB should look like this:
 > {
@@ -31,7 +51,7 @@ faculty documents in MongoDB should look like this:
 >   "password": "rubyWazHere",
 > }
 
-#### course:
+#### course
 
 course documents in mongoDB chould loook like this:
 > {
@@ -47,7 +67,7 @@ course documents in mongoDB chould loook like this:
 >   ]
 > }
 
-### app.properties:
+### app.properties
 
 The api depends on a certain file in order to know where to access MongoDB and to set certain values for authorization tokens.
 On your local machine, make a file called app.properties inside src/main/resources/. Include in it the following:
@@ -68,7 +88,7 @@ jwt.expiration=86400000
 
 ---
 
-## Using the API
+## Usage
 
 Below is described each endpoint of the API, what HTTP request methods are allowed on it, and what their request/response bodies will look like.
 
